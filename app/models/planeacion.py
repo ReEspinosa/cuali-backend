@@ -43,9 +43,21 @@ class Mensaje(Base):
     id = Column(String, primary_key=True, default=gen_uuid)
     planeacion_id = Column(String, ForeignKey("planeaciones.id"), nullable=False)
 
-    role = Column(String, nullable=False)  # "user" | "assistant"
+    role = Column(String, nullable=False)
     content = Column(Text, nullable=False)
+    adjuntos_json = Column(Text, nullable=True)
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     planeacion = relationship("Planeacion", back_populates="mensajes")
+
+    @property
+    def adjuntos(self) -> list[dict]:
+        import json
+        return json.loads(self.adjuntos_json) if self.adjuntos_json else []
+
+    @adjuntos.setter
+    def adjuntos(self, value: list[dict]) -> None:
+        import json
+        self.adjuntos_json = json.dumps(value, ensure_ascii=False)
+

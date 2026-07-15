@@ -1,18 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 
 from app.db.session import Base, engine
-from app.models import planeacion, user  # noqa: F401 — necesario para que Base los registre
-from app.routers import auth, planeaciones
+from app.models import conversacion, planeacion, user  # noqa: F401
+from app.routers import auth, conversaciones, planeaciones
+from app.routers import archivos, auth, conversaciones, planeaciones
 
-# TODO: en tu backend real, esta creación de tablas la maneja Alembic
-# (alembic upgrade head), no create_all(). La dejamos aquí solo para
-# poder correr el proyecto de inmediato sin configurar migraciones todavía.
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Cuali API", version="0.1.0")
 
-# TODO: restringir origins a tu dominio real en producción.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -23,6 +22,11 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(planeaciones.router)
+app.include_router(conversaciones.router)
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+app.include_router(archivos.router)
 
 
 @app.get("/")

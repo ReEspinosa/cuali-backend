@@ -71,6 +71,7 @@ def enviar_mensaje(
     planeacion = _get_planeacion_o_404(planeacion_id, user, db)
 
     mensaje_usuario = Mensaje(planeacion_id=planeacion.id, role="user", content=payload.content)
+    mensaje_usuario.adjuntos = [a.model_dump() for a in payload.adjuntos]
     db.add(mensaje_usuario)
     db.commit()
     db.refresh(mensaje_usuario)

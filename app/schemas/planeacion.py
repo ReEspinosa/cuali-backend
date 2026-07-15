@@ -29,14 +29,22 @@ class PlaneacionOut(BaseModel):
         from_attributes = True
 
 
+class AdjuntoIn(BaseModel):
+    url: str
+    filename: str
+    tipo: str
+
+
 class MensajeCreate(BaseModel):
     content: str
+    adjuntos: list[AdjuntoIn] = []
 
 
 class MensajeOut(BaseModel):
     id: str
     role: str
     content: str
+    adjuntos: list[AdjuntoIn] = []
     created_at: datetime
 
     class Config:

@@ -1,17 +1,17 @@
 """
-Dos funciones que corresponden a los dos prompts que platicamos:
+Funciones de LLM del proyecto. Todas son STUB por ahora (no llaman a ningún
+modelo real) para que el resto del flujo se pueda probar de inmediato.
+Cuando conectemos tu backend real con RAG (ChromaDB + tu API OpenAI-compatible),
+reemplaza el cuerpo de cada función marcada con TODO.
 
-1. generar_respuesta_chat() — el prompt "conversacional". Recibe el contexto
-   de la planeación (system prompt oculto) + el historial, y genera la
-   siguiente respuesta de Cuali.
+1. generar_respuesta_chat() — chat de una planeación específica, con el
+   contexto de esa planeación (grado, campo, PDA, etc.) como system prompt oculto.
 
-2. extraer_planeacion_estructurada() — el prompt "de extracción". Se dispara
-   solo al darle a "Generar planeación": toma TODA la conversación y la
-   traduce a un JSON con schema fijo, que alimenta la plantilla del PDF.
+2. extraer_planeacion_estructurada() — prompt "de extracción": convierte la
+   conversación completa en el JSON que alimenta la plantilla del PDF.
 
-TODO: ambas funciones son un STUB. Cuando conectemos tu backend real con RAG
-(ChromaDB + tu API OpenAI-compatible), reemplaza el cuerpo de estas funciones
-por las llamadas reales.
+3. generar_respuesta_general() — chat libre "Chat con Cuali", que además
+   regresa las fuentes (documento SEP + página) en las que se basó la respuesta.
 """
 
 from app.models.planeacion import Mensaje, Planeacion
@@ -38,18 +38,6 @@ contexto, úsalo para fundamentar tus sugerencias sin citarlo textualmente."""
 
 def generar_respuesta_chat(planeacion: Planeacion, historial: list[Mensaje], nuevo_mensaje: str) -> str:
     system_prompt = _system_prompt(planeacion)
-
-    # TODO: reemplazar por la llamada real, por ejemplo:
-    #
-    # from openai import OpenAI
-    # client = OpenAI(base_url=settings.openai_base_url, api_key=settings.openai_api_key)
-    # messages = [{"role": "system", "content": system_prompt}]
-    # for m in historial:
-    #     messages.append({"role": m.role, "content": m.content})
-    # messages.append({"role": "user", "content": nuevo_mensaje})
-    # response = client.chat.completions.create(model=settings.openai_model, messages=messages)
-    # return response.choices[0].message.content
-
     _ = system_prompt
     return (
         f'(Respuesta simulada) Entendido, tomando en cuenta "{planeacion.tema}" '
@@ -84,3 +72,28 @@ def extraer_planeacion_estructurada(planeacion: Planeacion, historial: list[Mens
         "tema": planeacion.tema,
         "sesiones": sesiones_ejemplo,
     }
+
+
+def generar_respuesta_general(historial: list, nuevo_mensaje: str) -> tuple[str, list[dict]]:
+    """
+    TODO: STUB. Cuando conectemos RAG real con ChromaDB, esta función debe
+    buscar en la colección de documentos SEP los fragmentos relevantes,
+    pasarlos como contexto al LLM, y regresar la respuesta junto con las
+    fuentes reales recuperadas (documento, campo formativo, página).
+    """
+    _ = historial
+
+    respuesta = (
+        f'(Respuesta simulada) Aquí conectaríamos con el modelo real y el RAG '
+        f'para responder a: "{nuevo_mensaje}"'
+    )
+
+    fuentes_ejemplo = [
+        {
+            "documento": "Programa Sintético Fase 5",
+            "campo": "Saberes y Pensamiento Científico",
+            "pagina": 42,
+        },
+    ]
+
+    return respuesta, fuentes_ejemplo
