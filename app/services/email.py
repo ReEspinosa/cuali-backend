@@ -61,3 +61,44 @@ Si tú no creaste esta cuenta, puedes ignorar este correo.
     except Exception as e:
         print(f"Error enviando correo: {e}")
         raise
+
+def enviar_link_reseteo(destinatario: str, token: str) -> None:
+    if not settings.smtp_user or not settings.smtp_password:
+        print(
+            f"\nSMTP no configurado - link de reseteo para {destinatario}:\n"
+            f"{settings.frontend_url}/reset-password?token={token}\n"
+        )
+        return
+
+    link = f"{settings.frontend_url}/reset-password?token={token}"
+
+    asunto = "Restablece tu contraseña de Cuali"
+    cuerpo = f"""Hola,
+
+Recibimos una solicitud para restablecer tu contraseña de Cuali.
+
+Da clic en este link para elegir una nueva contraseña:
+
+    {link}
+
+Este link expira en 2 horas.
+
+Si tú no solicitaste esto, puedes ignorar este correo — tu contraseña actual sigue siendo válida.
+"""
+
+    msg = MIMEText(cuerpo)
+    msg["Subject"] = asunto
+    msg["From"] = settings.smtp_from
+    msg["To"] = destinatario
+
+    try:
+        with smtplib.SMTP_SSL(settings.smtp_host, settings.smtp_port) as server:
+            server.login(settings.smtp_user, settings.smtp_password)
+            server.send_message(msg)
+        print(f"Correo de restablecimiento enviado a {destinatario}")
+    except smtplib.SMTPAuthenticationError:
+        print("Gmail rechazó las credenciales al mandar el correo de restablecimiento.")
+        raise
+    except Exception as e:
+        print(f"Error enviando correo de restablecimiento: {e}")
+        raise

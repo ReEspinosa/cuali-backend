@@ -6,16 +6,18 @@ from app.core.security import create_access_token, hash_password, verify_passwor
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.auth import (
+    ForgotPasswordRequest,
     ProfileUpdate,
     RegisterResponse,
     ResendCodeRequest,
+    ResetPasswordRequest,
     TokenResponse,
     UserLogin,
     UserOut,
     UserRegister,
     VerifyEmailRequest,
 )
-from app.services.email import enviar_codigo_verificacion
+from app.services.email import enviar_codigo_verificacion, enviar_link_reseteo
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -130,3 +132,35 @@ def actualizar_perfil(
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.post("/forgot-password", response_model=RegisterResponse)
+def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == payload.email).first()
+
+    # No revelamos si el correo existe o no — respondemos igual de "exitoso"
+    # en ambos casos, para no darle a alguien una forma de listar correos.
+    if user:
+        token = user.generar_reset_token()
+        db.commit()
+        enviar_link_reseteo(user.email, token)
+
+    return RegisterResponse(
+        message="Si el correo existe en nuestro sistema, te llegará un link para restablecer tu contraseña.",
+        email=payload.email,
+    )
+
+
+@router.post("/reset-password", response_model=RegisterResponse)
+def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.reset_token == payload.token).first()
+
+    if not user or not user.reset_token_valido(payload.token):
+        raise HTTPException(status_code=400, detail="El link es inválido o ya expiró.")
+
+    user.hashed_password = hash_password(payload.password)
+    user.reset_token = None
+    user.reset_token_expires = None
+    db.commit()
+
+    return RegisterResponse(message="Tu contraseña se actualizó correctamente.", email=user.email)

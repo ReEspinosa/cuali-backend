@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24  # 24 horas
 
+    # --- Frontend ---
+    # Se usa para construir el link de restablecer contraseña que va en el correo.
+    frontend_url: str = "http://localhost:5173"
+
     # --- Correo (SMTP) ---
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 465

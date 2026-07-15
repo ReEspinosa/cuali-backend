@@ -124,3 +124,26 @@ class ProfileUpdate(BaseModel):
         if v not in GENEROS_VALIDOS:
             raise ValueError(f"Género inválido. Debe ser uno de: {GENEROS_VALIDOS}")
         return v
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    password: str
+    password_confirm: str
+
+    @field_validator("password")
+    @classmethod
+    def password_minima(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("La contraseña debe tener al menos 8 caracteres.")
+        return v
+
+    @model_validator(mode="after")
+    def passwords_coinciden(self):
+        if self.password != self.password_confirm:
+            raise ValueError("Las contraseñas no coinciden.")
+        return self
