@@ -13,6 +13,29 @@ from app.models.planeacion import Mensaje, Planeacion
 from app.services.llm_client import chat_completion, chat_completion_json
 
 
+def _contenido_con_adjuntos(content: str, adjuntos: list[dict] | None) -> str:
+    """
+    Si el mensaje trae adjuntos con texto ya extraído (docx/pdf), lo agrega
+    como contexto legible para el modelo. Si el adjunto no se pudo leer
+    (imagen, .doc viejo, etc.), lo indica en vez de fingir que lo leyó.
+    """
+    if not adjuntos:
+        return content
+
+    bloques = [content] if content.strip() else []
+    for a in adjuntos:
+        nombre = a.get("filename", "archivo adjunto")
+        texto = a.get("texto_extraido")
+        if texto:
+            bloques.append(f'--- Contenido del archivo adjunto "{nombre}" ---\n{texto}\n--- Fin del archivo ---')
+        else:
+            bloques.append(
+                f'(El maestro adjuntó el archivo "{nombre}", pero no fue posible extraer su texto '
+                f"automáticamente. Si es relevante, pídele que te copie el contenido o te lo describa.)"
+            )
+    return "\n\n".join(bloques)
+
+
 def _system_prompt(planeacion: Planeacion) -> str:
     return f"""Eres Cuali, asistente pedagógico para maestros de primaria en México,
 alineado a la Nueva Escuela Mexicana (NEM).
@@ -65,15 +88,20 @@ información necesaria para armar tu planeación. Te invito a presionar el
 botón 'Generar planeación' que está arriba para descargarla." """
 
 
-def generar_respuesta_chat(planeacion: Planeacion, historial: list[Mensaje], nuevo_mensaje: str) -> str:
+def generar_respuesta_chat(
+    planeacion: Planeacion,
+    historial: list[Mensaje],
+    nuevo_mensaje: str,
+    adjuntos_nuevos: list[dict] | None = None,
+) -> str:
     num_mensajes_maestro = sum(1 for m in historial if m.role == "user") + 1
 
     system_prompt = _system_prompt(planeacion) + "\n\n" + _directiva_de_fase(num_mensajes_maestro)
 
     messages = [{"role": "system", "content": system_prompt}]
     for m in historial:
-        messages.append({"role": m.role, "content": m.content})
-    messages.append({"role": "user", "content": nuevo_mensaje})
+        messages.append({"role": m.role, "content": _contenido_con_adjuntos(m.content, m.adjuntos)})
+    messages.append({"role": "user", "content": _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)})
 
     return chat_completion(messages=messages, temperature=0.5, max_tokens=800)
 
@@ -204,13 +232,31 @@ planeación didáctica, el programa sintético, campos formativos, PDA, y
 estrategias pedagógicas en general. Sé breve, concreto y práctico. No uses
 emojis.
 
+Reglas de formato (muy importantes, tu respuesta se renderiza como Markdown real):
+- Puedes usar **negritas**, listas con "-" o "1.", y encabezados con "##"
+  cuando ayuden a organizar la respuesta. Úsalos con moderación, no abuses.
+- Si necesitas mostrar una tabla, usa SIEMPRE sintaxis de tabla Markdown
+  válida y completa, con la fila separadora de encabezado, por ejemplo:
+  | Columna A | Columna B |
+  |---|---|
+  | dato 1 | dato 2 |
+  Nunca escribas una tabla a medias ni mezcles el formato de tabla con texto
+  suelto entre celdas.
+- No pongas asteriscos sueltos que no formen parte de una negrita real
+  (nada de "*algo*" para énfasis simple; usa **negrita** o nada).
+- No uses emojis.
+
 Nota: todavía no tienes acceso a una base de documentos oficiales de la SEP
 para citar fuentes exactas (eso se conecta en un siguiente paso). Si no
 sabes algo con certeza, dilo en vez de inventar una referencia o número de
 página."""
 
 
-def generar_respuesta_general(historial: list, nuevo_mensaje: str) -> tuple[str, list[dict]]:
+def generar_respuesta_general(
+    historial: list,
+    nuevo_mensaje: str,
+    adjuntos_nuevos: list[dict] | None = None,
+) -> tuple[str, list[dict]]:
     """
     generar_respuesta_general() ya llama al modelo real. Las "fuentes" quedan
     vacías por ahora porque el RAG con ChromaDB sobre documentos SEP todavía
@@ -220,8 +266,8 @@ def generar_respuesta_general(historial: list, nuevo_mensaje: str) -> tuple[str,
     """
     messages = [{"role": "system", "content": _SYSTEM_PROMPT_GENERAL}]
     for m in historial:
-        messages.append({"role": m.role, "content": m.content})
-    messages.append({"role": "user", "content": nuevo_mensaje})
+        messages.append({"role": m.role, "content": _contenido_con_adjuntos(m.content, m.adjuntos)})
+    messages.append({"role": "user", "content": _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)})
 
     respuesta = chat_completion(messages=messages, temperature=0.5, max_tokens=800)
     return respuesta, []

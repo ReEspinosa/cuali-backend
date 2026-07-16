@@ -23,6 +23,7 @@ class AdjuntoIn(BaseModel):
     url: str
     filename: str
     tipo: str
+    texto_extraido: str | None = None
 
 
 class ChatMensajeCreate(BaseModel):

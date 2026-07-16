@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 from app.core.deps import get_current_user
 from app.models.user import User
+from app.services.extraccion_archivos import extraer_texto
 
 router = APIRouter(prefix="/archivos", tags=["archivos"])
 
@@ -43,9 +44,11 @@ async def subir_archivo(file: UploadFile, user: User = Depends(get_current_user)
     ruta.write_bytes(contenido)
 
     tipo = "imagen" if extension in EXTENSIONES_IMAGEN else "documento"
+    texto_extraido = extraer_texto(ruta)
 
     return {
         "url": f"/uploads/{nombre_guardado}",
         "filename": file.filename,
         "tipo": tipo,
+        "texto_extraido": texto_extraido,
     }

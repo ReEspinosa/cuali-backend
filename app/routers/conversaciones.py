@@ -83,6 +83,7 @@ def enviar_mensaje(
     respuesta_texto, fuentes = generar_respuesta_general(
         historial=conversacion.mensajes,
         nuevo_mensaje=payload.content,
+        adjuntos_nuevos=mensaje_usuario.adjuntos,
     )
 
     mensaje_asistente = ChatMensaje(

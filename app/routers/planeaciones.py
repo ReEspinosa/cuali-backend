@@ -82,6 +82,7 @@ def enviar_mensaje(
         planeacion=planeacion,
         historial=planeacion.mensajes,
         nuevo_mensaje=payload.content,
+        adjuntos_nuevos=mensaje_usuario.adjuntos,
     )
 
     mensaje_asistente = Mensaje(planeacion_id=planeacion.id, role="assistant", content=respuesta)
