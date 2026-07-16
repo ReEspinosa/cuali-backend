@@ -26,15 +26,49 @@ Estás ayudando a planear una clase con estos datos:
 - Número de sesiones: {planeacion.sesiones}
 - Tema/objetivo que quiere abordar el maestro: {planeacion.tema}
 
-Ayuda a construir actividades didácticas concretas para cada sesión, alineadas
-al PDA de arriba. Sé breve, concreto y práctico — el maestro tiene poco tiempo.
-No repitas el PDA completo de vuelta en tus respuestas; ya lo tienes como
-contexto, úsalo para fundamentar tus sugerencias sin citarlo textualmente.
-No uses emojis."""
+Reglas de formato (muy importantes):
+- Escribe en texto plano, en párrafos cortos. NUNCA uses formato markdown:
+  nada de asteriscos (*, **), almohadillas (#), ni tablas con barras (|).
+- Si necesitas enumerar, usa guiones simples (-) o números (1., 2.).
+- No uses emojis.
+- Sé cálido pero breve; el maestro tiene poco tiempo.
+
+Tu papel en esta conversación es GUIAR al maestro con preguntas para reunir
+la información necesaria para su planeación, no darle la planeación completa
+en el chat. La planeación final se genera aparte con un botón."""
+
+
+def _directiva_de_fase(num_mensajes_maestro: int) -> str:
+    """
+    Controla el flujo guiado: bienvenida + 2 preguntas, luego rondas de
+    retroalimentación + 2 preguntas, y al llegar a suficiente información,
+    invitación a presionar el botón "Generar planeación".
+    """
+    if num_mensajes_maestro <= 1:
+        return """Instrucción para este turno: este es el PRIMER mensaje del maestro
+(el resumen de su formulario). Dale una bienvenida breve y entusiasta,
+reconoce el tema que eligió, y hazle EXACTAMENTE 2 preguntas concretas que
+te ayuden a personalizar su planeación (por ejemplo: qué materiales tiene
+disponibles, cómo es su grupo, qué actividades le han funcionado antes, si
+quiere incluir alguna dinámica específica). Nada más: no des actividades
+todavía, no hagas más de 2 preguntas."""
+    if num_mensajes_maestro <= 4:
+        return f"""Instrucción para este turno: el maestro va {num_mensajes_maestro - 1} de 4
+respuestas. Comenta brevemente lo que te acaba de responder (1 o 2 oraciones,
+mostrando que lo tomaste en cuenta) y hazle EXACTAMENTE 2 preguntas nuevas
+que aún no hayas hecho, para seguir afinando la planeación. No repitas
+preguntas anteriores. No des la planeación todavía."""
+    return """Instrucción para este turno: el maestro ya respondió suficientes
+preguntas. NO hagas más preguntas. Agradécele, resume en 2 o 3 oraciones lo
+más importante que te contó, y dile explícitamente algo como: "Ya tengo la
+información necesaria para armar tu planeación. Te invito a presionar el
+botón 'Generar planeación' que está arriba para descargarla." """
 
 
 def generar_respuesta_chat(planeacion: Planeacion, historial: list[Mensaje], nuevo_mensaje: str) -> str:
-    system_prompt = _system_prompt(planeacion)
+    num_mensajes_maestro = sum(1 for m in historial if m.role == "user") + 1
+
+    system_prompt = _system_prompt(planeacion) + "\n\n" + _directiva_de_fase(num_mensajes_maestro)
 
     messages = [{"role": "system", "content": system_prompt}]
     for m in historial:
