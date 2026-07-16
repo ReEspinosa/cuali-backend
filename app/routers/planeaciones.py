@@ -10,7 +10,7 @@ from app.schemas.planeacion import (
     MensajeCreate, MensajeOut, PlaneacionCreate, PlaneacionDetalle, PlaneacionOut,
 )
 from app.services.llm import extraer_planeacion_estructurada, generar_respuesta_chat
-from app.services.pdf import generar_pdf_planeacion
+from app.services.docx_generator import generar_docx_planeacion
 
 router = APIRouter(prefix="/planeaciones", tags=["planeaciones"])
 
@@ -93,41 +93,43 @@ def enviar_mensaje(
 
 
 @router.post("/{planeacion_id}/generar")
-def generar_planeacion_pdf(
+def generar_planeacion_docx(
     planeacion_id: str,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
     planeacion = _get_planeacion_o_404(planeacion_id, user, db)
 
-    if not planeacion.mensajes:
+    mensajes_usuario = [m for m in planeacion.mensajes if m.role == "user"]
+    if len(mensajes_usuario) < 5:
         raise HTTPException(
             status_code=400,
-            detail="Necesitas platicar al menos un poco con Cuali antes de generar el PDF.",
+            detail="Aún no hay información suficiente para generar la planeación. "
+                   "Sigue platicando con Cuali un poco más.",
         )
 
     datos_estructurados = extraer_planeacion_estructurada(planeacion, planeacion.mensajes)
-    pdf_path = generar_pdf_planeacion(planeacion.id, datos_estructurados)
+    docx_path = generar_docx_planeacion(planeacion.id, datos_estructurados)
 
-    planeacion.pdf_path = pdf_path
+    planeacion.docx_path = docx_path
     planeacion.status = "finalizada"
     db.commit()
 
-    return {"pdf_url": f"/planeaciones/{planeacion.id}/pdf"}
+    return {"docx_url": f"/planeaciones/{planeacion.id}/docx"}
 
 
-@router.get("/{planeacion_id}/pdf")
-def descargar_pdf(
+@router.get("/{planeacion_id}/docx")
+def descargar_docx(
     planeacion_id: str,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
     planeacion = _get_planeacion_o_404(planeacion_id, user, db)
-    if not planeacion.pdf_path:
-        raise HTTPException(status_code=404, detail="Esta planeación todavía no tiene un PDF generado.")
+    if not planeacion.docx_path:
+        raise HTTPException(status_code=404, detail="Esta planeación todavía no tiene un documento generado.")
 
     return FileResponse(
-        planeacion.pdf_path,
-        media_type="application/pdf",
-        filename=f"planeacion_{planeacion.contenido[:30]}.pdf",
+        planeacion.docx_path,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=f"planeacion_{planeacion.contenido[:30]}.docx",
     )

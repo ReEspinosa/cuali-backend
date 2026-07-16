@@ -23,6 +23,7 @@ class PlaneacionOut(BaseModel):
     tema: str
     status: str
     pdf_path: str | None
+    docx_path: str | None
     created_at: datetime
 
     class Config:
@@ -56,4 +57,4 @@ class PlaneacionDetalle(PlaneacionOut):
 
 
 class GenerarPlaneacionOut(BaseModel):
-    pdf_url: str
+    docx_url: str

@@ -22,7 +22,8 @@ class Planeacion(Base):
     tema = Column(Text, nullable=False)
 
     status = Column(String, default="borrador", nullable=False)
-    pdf_path = Column(String, nullable=True)
+    pdf_path = Column(String, nullable=True)  # legacy, ya no se usa para generar
+    docx_path = Column(String, nullable=True)
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(
@@ -60,4 +61,3 @@ class Mensaje(Base):
     def adjuntos(self, value: list[dict]) -> None:
         import json
         self.adjuntos_json = json.dumps(value, ensure_ascii=False)
-
