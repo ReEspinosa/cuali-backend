@@ -271,3 +271,175 @@ def generar_respuesta_general(
 
     respuesta = chat_completion(messages=messages, temperature=0.5, max_tokens=800)
     return respuesta, []
+
+_DIAPOSITIVAS_SYSTEM_PROMPT = """Eres un asistente que genera el contenido de una
+presentación infantil para alumnos de primaria en México, alineada a la
+Nueva Escuela Mexicana cuando aplique.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- El número de objetos en "diapositivas" debe ser EXACTAMENTE el solicitado.
+- Cada diapositiva lleva: un título corto (máximo 8 palabras), entre 2 y 4
+  puntos de contenido (frases cortas y claras, lenguaje apropiado para niños
+  de primaria), y un emoji que ilustre el tema de esa diapositiva.
+- La última diapositiva debe ser de cierre: repaso, pregunta al grupo o
+  actividad rápida.
+- Si se te proporciona el contenido de un documento adjunto, basa las
+  diapositivas en ese material.
+- No repitas el mismo emoji en todas las diapositivas.
+
+Responde con este JSON exacto:
+{
+  "diapositivas": [
+    { "titulo": "string", "puntos": ["string", "string"], "emoji": "un solo emoji" }
+  ]
+}"""
+
+
+def generar_contenido_diapositivas(
+    titulo: str,
+    descripcion: str,
+    num_diapositivas: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"""Genera el contenido para una presentación de {num_diapositivas} diapositivas.
+
+Título / tema: {titulo}
+Lo que debe incluir según el maestro: {descripcion}
+"""
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _DIAPOSITIVAS_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.4, max_tokens=2500)
+    datos = _extraer_json(respuesta_cruda)
+
+    diapositivas = datos.get("diapositivas", [])
+    # Ajuste defensivo por si el modelo no respetó el número exacto
+    if len(diapositivas) > num_diapositivas:
+        diapositivas = diapositivas[:num_diapositivas]
+    while len(diapositivas) < num_diapositivas:
+        diapositivas.append({
+            "titulo": "Para reflexionar",
+            "puntos": ["¿Qué fue lo que más te gustó del tema?", "Coméntalo con tu grupo."],
+            "emoji": "💭",
+        })
+
+    return {"diapositivas": diapositivas}
+
+
+_CUESTIONARIO_SYSTEM_PROMPT = """Eres un asistente que redacta cuestionarios de
+evaluación para primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- El número de objetos en "preguntas" debe ser EXACTAMENTE el solicitado.
+- Cada pregunta tiene un campo "tipo": "opcion_multiple", "verdadero_falso"
+  o "abierta".
+- Si "tipo_preguntas" solicitado es "mixto", combina los tres tipos de forma
+  equilibrada entre las preguntas. Si es uno específico, TODAS las preguntas
+  deben ser de ese tipo.
+- Para "opcion_multiple": incluye "opciones" (lista de 4 opciones como
+  strings, sin prefijo de letra) y "respuesta_correcta" (el texto exacto de
+  la opción correcta, tal cual aparece en "opciones").
+- Para "verdadero_falso": "opciones" debe ser ["Verdadero", "Falso"] y
+  "respuesta_correcta" es "Verdadero" o "Falso".
+- Para "abierta": no incluyas "opciones"; en su lugar incluye
+  "respuesta_sugerida" (una respuesta modelo breve, para guía del maestro,
+  no para el alumno).
+- Si se te proporciona el contenido de un documento adjunto, basa las
+  preguntas en ese material.
+- Lenguaje claro y apropiado para primaria. No uses emojis.
+
+Responde con este JSON exacto:
+{
+  "preguntas": [
+    {
+      "pregunta": "string",
+      "tipo": "opcion_multiple | verdadero_falso | abierta",
+      "opciones": ["string", "..."],
+      "respuesta_correcta": "string",
+      "respuesta_sugerida": "string (solo si tipo es abierta)"
+    }
+  ]
+}"""
+
+
+def generar_contenido_cuestionario(
+    titulo: str,
+    descripcion: str,
+    tipo_preguntas: str,
+    num_preguntas: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"""Genera un cuestionario de {num_preguntas} preguntas.
+
+Título / tema: {titulo}
+Qué se quiere evaluar, según el maestro: {descripcion}
+Tipo de preguntas solicitado: {tipo_preguntas}
+"""
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _CUESTIONARIO_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.4, max_tokens=3000)
+    datos = _extraer_json(respuesta_cruda)
+    return _normalizar_preguntas(datos, num_preguntas)
+
+
+def ajustar_contenido_cuestionario(
+    titulo: str,
+    tipo_preguntas: str,
+    num_preguntas: int,
+    preguntas_actuales: list[dict],
+    instrucciones: str,
+) -> dict:
+    contexto = f"""Este es el cuestionario actual (título: "{titulo}", tipo: {tipo_preguntas}, {num_preguntas} preguntas):
+
+{json.dumps({"preguntas": preguntas_actuales}, ensure_ascii=False, indent=2)}
+
+El maestro pidió este cambio: {instrucciones}
+
+Regenera el cuestionario completo aplicando ese cambio. Mantén el mismo
+número de preguntas ({num_preguntas}) salvo que el maestro haya pedido
+explícitamente cambiar la cantidad."""
+
+    messages = [
+        {"role": "system", "content": _CUESTIONARIO_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.4, max_tokens=3000)
+    datos = _extraer_json(respuesta_cruda)
+    return _normalizar_preguntas(datos, num_preguntas)
+
+
+def _normalizar_preguntas(datos: dict, num_preguntas: int) -> dict:
+    preguntas = datos.get("preguntas", [])
+    if len(preguntas) > num_preguntas:
+        preguntas = preguntas[:num_preguntas]
+    while len(preguntas) < num_preguntas:
+        preguntas.append({
+            "pregunta": "Pregunta pendiente de completar.",
+            "tipo": "abierta",
+            "respuesta_sugerida": "",
+        })
+    return {"preguntas": preguntas}

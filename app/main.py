@@ -5,8 +5,7 @@ import os
 
 from app.db.session import Base, engine
 from app.models import conversacion, planeacion, user  # noqa: F401
-from app.routers import auth, conversaciones, planeaciones
-from app.routers import archivos, auth, conversaciones, planeaciones
+from app.routers import archivos, auth, conversaciones, planeaciones, recursos
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,6 +26,7 @@ os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(archivos.router)
+app.include_router(recursos.router)
 
 
 @app.get("/")
