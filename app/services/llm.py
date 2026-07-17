@@ -1,16 +1,91 @@
 """
 Funciones de LLM del proyecto.
 
-generar_respuesta_chat() y extraer_planeacion_estructurada() ya llaman al
-modelo real (LM Studio / UNAM). generar_respuesta_general() sigue en stub —
-depende del RAG con ChromaDB, que todavía no está conectado.
-"""
+generar_respuesta_chat() y generar_respuesta_general() usan el RAG real de
+la SEP (retrieval + reglas anti-alucinación) para armar el contexto, y
+delegan la llamada al modelo al cliente ya probado en
+app.services.llm_client (el que sabe manejar el HTTP Basic Auth del
+servidor de la UNAM) -- no se crea ningún cliente nuevo aquí.
 
+extraer_planeacion_estructurada() no requiere RAG (no busca contenido nuevo
+de la SEP, solo estructura la conversación ya ocurrida).
+
+El resto de las funciones (diapositivas, cuestionarios, mapas mentales,
+juegos, laboratorio, etc.) tampoco usan el RAG -- generan contenido a partir
+de lo que el maestro pide y, si aplica, del texto de un adjunto.
+"""
 import json
+import logging
 import re
 
 from app.models.planeacion import Mensaje, Planeacion
 from app.services.llm_client import chat_completion, chat_completion_json
+
+logger = logging.getLogger(__name__)
+
+try:
+    from app.services.rag.rag_chat import ask as rag_ask
+except Exception:
+    logger.exception("No se pudo importar el módulo de RAG -- revisa dependencias/config.")
+    rag_ask = None
+
+
+_GRADO_WORDS = {
+    "primero": "1", "primer": "1",
+    "segundo": "2",
+    "tercero": "3", "tercer": "3",
+    "cuarto": "4",
+    "quinto": "5",
+    "sexto": "6",
+}
+
+
+def _detectar_grado_y_limpiar(texto: str) -> tuple[str | None, str]:
+    """
+    Detecta menciones de grado en texto libre (ej. "para tercer grado",
+    "3er grado", "grado 4", "segundo de primaria") para poder filtrar la
+    búsqueda del RAG por ese grado, incluso en el chat libre donde no hay
+    un campo de grado explícito en la base de datos.
+
+    Además de detectarlo, lo QUITA del texto que se va a usar para la
+    búsqueda semántica (regresa un texto "limpio" aparte). Esto es
+    importante: como el grado ya se aplica como filtro exacto de metadata,
+    dejar palabras como "sexto"/"6" en el texto de búsqueda no ayuda -- solo
+    agrega ruido al embedding, y puede hacer que la misma pregunta escrita
+    de dos formas distintas ("sexto grado" vs "6 grado") traiga resultados
+    diferentes. Quitarlo hace que ambas formas busquen exactamente lo mismo.
+
+    Regresa (grado, texto_para_busqueda). Si no detecta nada, regresa
+    (None, texto original).
+    """
+    patrones = [
+        r"\d\s*[°º]?\s*(?:er|do|to|ro|vo)?\s*(?:de\s*)?grado",
+        r"grado\s*(?:de\s*)?\d",
+    ]
+    for patron in patrones:
+        match = re.search(patron, texto, flags=re.IGNORECASE)
+        if match:
+            grado = re.search(r"\d", match.group(0)).group(0)
+            limpio = texto[:match.start()] + texto[match.end():]
+            limpio = re.sub(r"\s+", " ", limpio).strip(" ,.")
+            return grado, limpio
+
+    for palabra, grado in _GRADO_WORDS.items():
+        # también consume "de primaria" o "grado" si sigue justo después,
+        # para no dejar residuos colgando ("... de grado" suelto)
+        match = re.search(rf"\b{palabra}\b(\s+de\s+primaria|\s+grado)?", texto, flags=re.IGNORECASE)
+        if match:
+            limpio = texto[:match.start()] + texto[match.end():]
+            limpio = re.sub(r"\s+", " ", limpio).strip(" ,.")
+            return grado, limpio
+
+    return None, texto
+
+
+def _chat_fn(messages: list[dict]) -> str:
+    """Puente hacia el cliente LLM ya probado del equipo -- así el RAG usa
+    la misma conexión (con Basic Auth) que ya confirmamos que funciona."""
+    return chat_completion(messages=messages, temperature=0.2, max_tokens=2200)
 
 
 def _contenido_con_adjuntos(content: str, adjuntos: list[dict] | None) -> str:
@@ -49,16 +124,14 @@ Estás ayudando a planear una clase con estos datos:
 - Número de sesiones: {planeacion.sesiones}
 - Tema/objetivo que quiere abordar el maestro: {planeacion.tema}
 
-Reglas de formato (muy importantes):
-- Escribe en texto plano, en párrafos cortos. NUNCA uses formato markdown:
-  nada de asteriscos (*, **), almohadillas (#), ni tablas con barras (|).
-- Si necesitas enumerar, usa guiones simples (-) o números (1., 2.).
-- No uses emojis.
-- Sé cálido pero breve; el maestro tiene poco tiempo.
-
 Tu papel en esta conversación es GUIAR al maestro con preguntas para reunir
 la información necesaria para su planeación, no darle la planeación completa
-en el chat. La planeación final se genera aparte con un botón."""
+en el chat. La planeación final se genera aparte con un botón. Cuando
+comentes o sugieras algo, aunque sea brevemente, apóyate en los fragmentos
+de los libros de la SEP que se te den como contexto, no en conocimiento
+general.
+
+No uses emojis."""
 
 
 def _directiva_de_fase(num_mensajes_maestro: int) -> str:
@@ -88,6 +161,67 @@ información necesaria para armar tu planeación. Te invito a presionar el
 botón 'Generar planeación' que está arriba para descargarla." """
 
 
+def _to_history_messages(historial: list[Mensaje]) -> list[dict]:
+    return [
+        {"role": mensaje.role, "content": _contenido_con_adjuntos(mensaje.content, mensaje.adjuntos)}
+        for mensaje in historial
+    ]
+
+
+def _normalizar_fuentes(sources: list[dict]) -> list[dict]:
+    fuentes = []
+    for source in sources or []:
+        if not isinstance(source, dict):
+            continue
+        fuentes.append({
+            "documento": source.get("libro") or source.get("documento") or "",
+            "campo": source.get("materia") or source.get("campo"),
+            "pagina": source.get("paginas") or source.get("pagina"),
+        })
+    return fuentes
+
+
+class RagNoDisponible(Exception):
+    """Se lanza cuando el RAG no pudo responder -- por config faltante o
+    por una falla real -- para que quien llame decida qué mostrar, en vez
+    de recibir silenciosamente un string vacío indistinguible de otros
+    casos."""
+
+
+def _generar_respuesta_con_rag(
+    question: str,
+    grado=None,
+    historial=None,
+    extra_context=None,
+    retrieval_query=None,
+    allow_markdown=False,
+) -> tuple[str, list[dict]]:
+    if rag_ask is None:
+        raise RagNoDisponible("El módulo de RAG no se pudo cargar (ver log al iniciar el backend).")
+
+    try:
+        resultado = rag_ask(
+            question=question,
+            # OJO: NO se filtra por materia aquí -- "materia" en el RAG es
+            # el tipo de libro (Proyectos de Aula, Múltiples Lenguajes...),
+            # no el campo formativo NEM. Filtrar por campo_formativo daría
+            # cero resultados casi siempre porque no hace match exacto.
+            grado=str(grado) if grado is not None else None,
+            history=historial,
+            extra_context=extra_context,
+            chat_fn=_chat_fn,
+            retrieval_query=retrieval_query,
+            allow_markdown=allow_markdown,
+        )
+    except Exception:
+        logger.exception("Falla al llamar al RAG para la pregunta: %r", question)
+        raise RagNoDisponible("Ocurrió un error al consultar el RAG.")
+
+    answer = resultado.get("answer") or ""
+    sources = _normalizar_fuentes(resultado.get("sources") or [])
+    return answer, sources
+
+
 def generar_respuesta_chat(
     planeacion: Planeacion,
     historial: list[Mensaje],
@@ -95,15 +229,29 @@ def generar_respuesta_chat(
     adjuntos_nuevos: list[dict] | None = None,
 ) -> str:
     num_mensajes_maestro = sum(1 for m in historial if m.role == "user") + 1
+    extra_context = _system_prompt(planeacion) + "\n\n" + _directiva_de_fase(num_mensajes_maestro)
+    pregunta_con_adjuntos = _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)
 
-    system_prompt = _system_prompt(planeacion) + "\n\n" + _directiva_de_fase(num_mensajes_maestro)
-
-    messages = [{"role": "system", "content": system_prompt}]
-    for m in historial:
-        messages.append({"role": m.role, "content": _contenido_con_adjuntos(m.content, m.adjuntos)})
-    messages.append({"role": "user", "content": _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)})
-
-    return chat_completion(messages=messages, temperature=0.5, max_tokens=800)
+    try:
+        respuesta, _ = _generar_respuesta_con_rag(
+            question=pregunta_con_adjuntos,
+            grado=planeacion.grado,
+            historial=_to_history_messages(historial),
+            extra_context=extra_context,
+            # Búsqueda con el mensaje original, sin el texto del adjunto
+            # pegado -- un adjunto largo diluiría la búsqueda semántica.
+            retrieval_query=nuevo_mensaje,
+        )
+        return respuesta
+    except RagNoDisponible:
+        # Fallback EXPLÍCITO -- nunca simula una respuesta real. El docente
+        # necesita saber que esto no vino de los libros de la SEP.
+        return (
+            "No pude conectarme con la base de libros de la SEP en este momento, "
+            "así que no puedo darte una respuesta fundamentada ahora mismo. "
+            "Intenta de nuevo en unos segundos; si el problema persiste, avísale "
+            "al equipo técnico."
+        )
 
 
 _EXTRACCION_SYSTEM_PROMPT = """Eres un asistente que convierte una conversación entre
@@ -226,51 +374,28 @@ Conversación completa entre el maestro y Cuali:
     }
 
 
-_SYSTEM_PROMPT_GENERAL = """Eres Cuali, asistente pedagógico para maestros de primaria en
-México, alineado a la Nueva Escuela Mexicana (NEM). Ayudas con dudas sobre
-planeación didáctica, el programa sintético, campos formativos, PDA, y
-estrategias pedagógicas en general. Sé breve, concreto y práctico. No uses
-emojis.
-
-Reglas de formato (muy importantes, tu respuesta se renderiza como Markdown real):
-- Puedes usar **negritas**, listas con "-" o "1.", y encabezados con "##"
-  cuando ayuden a organizar la respuesta. Úsalos con moderación, no abuses.
-- Si necesitas mostrar una tabla, usa SIEMPRE sintaxis de tabla Markdown
-  válida y completa, con la fila separadora de encabezado, por ejemplo:
-  | Columna A | Columna B |
-  |---|---|
-  | dato 1 | dato 2 |
-  Nunca escribas una tabla a medias ni mezcles el formato de tabla con texto
-  suelto entre celdas.
-- No pongas asteriscos sueltos que no formen parte de una negrita real
-  (nada de "*algo*" para énfasis simple; usa **negrita** o nada).
-- No uses emojis.
-
-Nota: todavía no tienes acceso a una base de documentos oficiales de la SEP
-para citar fuentes exactas (eso se conecta en un siguiente paso). Si no
-sabes algo con certeza, dilo en vez de inventar una referencia o número de
-página."""
-
-
 def generar_respuesta_general(
     historial: list,
     nuevo_mensaje: str,
     adjuntos_nuevos: list[dict] | None = None,
 ) -> tuple[str, list[dict]]:
-    """
-    generar_respuesta_general() ya llama al modelo real. Las "fuentes" quedan
-    vacías por ahora porque el RAG con ChromaDB sobre documentos SEP todavía
-    no está conectado — cuando lo esté, esta función debe buscar los
-    fragmentos relevantes, pasarlos como contexto, y regresar las fuentes
-    reales recuperadas (documento, campo, página) en vez de [].
-    """
-    messages = [{"role": "system", "content": _SYSTEM_PROMPT_GENERAL}]
-    for m in historial:
-        messages.append({"role": m.role, "content": _contenido_con_adjuntos(m.content, m.adjuntos)})
-    messages.append({"role": "user", "content": _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)})
+    grado_detectado, texto_busqueda = _detectar_grado_y_limpiar(nuevo_mensaje)
+    pregunta_con_adjuntos = _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)
+    try:
+        return _generar_respuesta_con_rag(
+            question=pregunta_con_adjuntos,
+            grado=grado_detectado,
+            historial=_to_history_messages(historial),
+            retrieval_query=texto_busqueda,
+            allow_markdown=True,
+        )
+    except RagNoDisponible:
+        return (
+            "No pude conectarme con la base de libros de la SEP en este momento. "
+            "Intenta de nuevo en unos segundos.",
+            [],
+        )
 
-    respuesta = chat_completion(messages=messages, temperature=0.5, max_tokens=800)
-    return respuesta, []
 
 _DIAPOSITIVAS_SYSTEM_PROMPT = """Eres un asistente que genera el contenido de una
 presentación infantil para alumnos de primaria en México, alineada a la

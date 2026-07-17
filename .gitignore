@@ -12,3 +12,13 @@ chroma_db/
 .idea/
 .DS_Store
 generated_pdfs/
+
+# PDFs fuente de los libros de la SEP -- ya están vectorizados en
+# data/chunks.jsonl y data/chroma_db/, así que no hace falta versionarlos
+# para que el RAG funcione.
+app/services/rag/data/pdfs/
+app/services/rag/data/
+# Archivos generados en tiempo de ejecución (docx/pptx de salida) y
+# adjuntos que suben los usuarios -- no son código, no se versionan.
+generated_docs/
+uploads/

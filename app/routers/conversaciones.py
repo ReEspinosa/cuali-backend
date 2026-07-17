@@ -70,7 +70,9 @@ def enviar_mensaje(
 ):
     conversacion = _get_conversacion_o_404(conversacion_id, user, db)
 
+    # Conservamos la versión de tus compañeros (Updated upstream)
     mensaje_usuario = ChatMensaje(conversacion_id=conversacion.id, role="user", content=payload.content)
+    
     mensaje_usuario.adjuntos = [a.model_dump() for a in payload.adjuntos]
     db.add(mensaje_usuario)
 

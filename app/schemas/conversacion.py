@@ -16,7 +16,7 @@ class ConversacionOut(BaseModel):
 class SourceOut(BaseModel):
     documento: str
     campo: str | None = None
-    pagina: int | None = None
+    pagina: str | int | None = None
 
 
 class AdjuntoIn(BaseModel):
