@@ -4,8 +4,8 @@ from fastapi.staticfiles import StaticFiles
 import os
 
 from app.db.session import Base, engine
-from app.models import conversacion, planeacion, user  # noqa: F401
-from app.routers import archivos, auth, conversaciones, planeaciones, recursos
+from app.models import comunidad, conversacion, planeacion, user  # noqa: F401
+from app.routers import archivos, auth, comunidad as comunidad_router, conversaciones, planeaciones, recursos
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,6 +27,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(archivos.router)
 app.include_router(recursos.router)
+app.include_router(comunidad_router.router)
 
 
 @app.get("/")

@@ -443,3 +443,441 @@ def _normalizar_preguntas(datos: dict, num_preguntas: int) -> dict:
             "respuesta_sugerida": "",
         })
     return {"preguntas": preguntas}
+
+
+_MAPA_MENTAL_SYSTEM_PROMPT = """Eres un asistente que organiza un tema en la
+estructura de un mapa mental para alumnos de primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- "tema_central" es el nodo del centro: 1 a 4 palabras.
+- Genera entre 4 y 6 ramas principales. Cada "titulo" de rama debe ser corto
+  (máximo 4 palabras).
+- Cada rama tiene entre 2 y 4 "subpuntos", cada uno corto (máximo 6 palabras).
+- Si se te da un documento adjunto, basa el mapa en su contenido real.
+- Lenguaje claro y apropiado para primaria. No uses emojis.
+
+Responde con este JSON exacto:
+{
+  "tema_central": "string",
+  "ramas": [
+    { "titulo": "string", "subpuntos": ["string", "string"] }
+  ]
+}"""
+
+
+def generar_contenido_mapa_mental(
+    tema: str,
+    resumen: str,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"""Tema: {tema}
+Resumen o enfoque que quiere el maestro: {resumen}
+"""
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _MAPA_MENTAL_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=1500)
+    datos = _extraer_json(respuesta_cruda)
+
+    if not datos.get("tema_central"):
+        datos["tema_central"] = tema
+    if not datos.get("ramas"):
+        datos["ramas"] = []
+
+    return datos
+
+
+_MEMORAMA_SYSTEM_PROMPT = """Eres un asistente que crea el contenido de un juego
+de memorama educativo para primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- Genera EXACTAMENTE el número de pares solicitado.
+- Cada par tiene "concepto" (una palabra o frase muy corta, máximo 3
+  palabras) y "definicion" (una explicación breve, máximo 10 palabras) que
+  correspondan entre sí.
+- No repitas conceptos. Cada par debe ser claramente distinto de los demás
+  para que emparejarlos no sea ambiguo.
+- Si se te da un documento adjunto, basa los pares en su contenido real.
+- Lenguaje claro y apropiado para primaria. No uses emojis.
+
+Responde con este JSON exacto:
+{
+  "pares": [
+    { "concepto": "string", "definicion": "string" }
+  ]
+}"""
+
+
+def generar_contenido_memorama(
+    tema: str,
+    num_pares: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"""Tema: {tema}
+Número de pares a generar: {num_pares}
+"""
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _MEMORAMA_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=1800)
+    datos = _extraer_json(respuesta_cruda)
+
+    pares = datos.get("pares", [])
+    if len(pares) > num_pares:
+        pares = pares[:num_pares]
+
+    return {"pares": pares}
+
+
+_SOPA_LETRAS_SYSTEM_PROMPT = """Eres un asistente que elige palabras para una
+sopa de letras educativa de primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- Genera EXACTAMENTE el número de palabras solicitado.
+- Cada palabra debe ser UNA sola palabra (sin espacios), en español, entre 3
+  y 12 letras, relacionada directamente con el tema.
+- No repitas palabras. No uses siglas ni abreviaturas.
+- Si se te da un documento adjunto, elige las palabras de ahí.
+
+Responde con este JSON exacto:
+{ "palabras": ["string", "string"] }"""
+
+
+def generar_contenido_sopa_letras(
+    tema: str,
+    num_palabras: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"Tema: {tema}\nNúmero de palabras a generar: {num_palabras}\n"
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _SOPA_LETRAS_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=800)
+    datos = _extraer_json(respuesta_cruda)
+
+    palabras = datos.get("palabras", [])
+    if len(palabras) > num_palabras:
+        palabras = palabras[:num_palabras]
+    return {"palabras": palabras}
+
+
+_RULETA_SYSTEM_PROMPT = """Eres un asistente que redacta preguntas de trivia
+educativa para primaria en México, para una dinámica de ruleta en clase.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- Genera EXACTAMENTE el número de preguntas solicitado.
+- Cada pregunta es corta y clara, con una "respuesta" breve (máximo 8
+  palabras).
+- No repitas preguntas ni hagas dos preguntas sobre lo mismo.
+- Si se te da un documento adjunto, basa las preguntas en su contenido real.
+- Lenguaje apropiado para primaria. No uses emojis.
+
+Responde con este JSON exacto:
+{ "preguntas": [ { "pregunta": "string", "respuesta": "string" } ] }"""
+
+
+def generar_contenido_ruleta(
+    tema: str,
+    num_preguntas: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"Tema: {tema}\nNúmero de preguntas a generar: {num_preguntas}\n"
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _RULETA_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=1500)
+    datos = _extraer_json(respuesta_cruda)
+
+    preguntas = datos.get("preguntas", [])
+    if len(preguntas) > num_preguntas:
+        preguntas = preguntas[:num_preguntas]
+    return {"preguntas": preguntas}
+
+
+_CRUCIGRAMA_SYSTEM_PROMPT = """Eres un asistente que elige palabras y pistas
+para un crucigrama educativo de primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- Genera EXACTAMENTE el número de palabras solicitado.
+- Cada palabra debe ser UNA sola palabra (sin espacios), en español, entre 3
+  y 10 letras, relacionada con el tema.
+- Elige palabras que compartan varias letras entre sí (por ejemplo que varias
+  contengan la misma vocal en distintas posiciones), para que puedan cruzarse
+  bien en un crucigrama. Evita que todas empiecen con la misma letra.
+- Cada palabra lleva una "pista": una definición o descripción breve (máximo
+  12 palabras) que NO debe contener la palabra misma.
+- No repitas palabras.
+- Si se te da un documento adjunto, elige las palabras y pistas de ahí.
+
+Responde con este JSON exacto:
+{ "palabras": [ { "palabra": "string", "pista": "string" } ] }"""
+
+
+def generar_contenido_crucigrama(
+    tema: str,
+    num_palabras: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"Tema: {tema}\nNúmero de palabras a generar: {num_palabras}\n"
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _CRUCIGRAMA_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=1500)
+    datos = _extraer_json(respuesta_cruda)
+
+    palabras = datos.get("palabras", [])
+    if len(palabras) > num_palabras:
+        palabras = palabras[:num_palabras]
+    return {"palabras": palabras}
+
+
+_AHORCADO_SYSTEM_PROMPT = """Eres un asistente que elige palabras para un
+juego de ahorcado educativo de primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- Genera EXACTAMENTE el número de palabras solicitado.
+- Cada palabra debe ser UNA sola palabra (sin espacios), en español, entre 4
+  y 12 letras, relacionada con el tema.
+- Cada palabra lleva una "pista": una definición breve (máximo 12 palabras)
+  que NO debe contener la palabra misma ni ninguna de sus letras consecutivas
+  formando parte visible de la respuesta.
+- No repitas palabras.
+- Si se te da un documento adjunto, elige las palabras y pistas de ahí.
+
+Responde con este JSON exacto:
+{ "palabras": [ { "palabra": "string", "pista": "string" } ] }"""
+
+
+def generar_contenido_ahorcado(
+    tema: str,
+    num_palabras: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"Tema: {tema}\nNúmero de palabras a generar: {num_palabras}\n"
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _AHORCADO_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=1200)
+    datos = _extraer_json(respuesta_cruda)
+
+    palabras = datos.get("palabras", [])
+    if len(palabras) > num_palabras:
+        palabras = palabras[:num_palabras]
+    return {"palabras": palabras}
+
+
+_VERDADERO_FALSO_SYSTEM_PROMPT = """Eres un asistente que redacta afirmaciones
+de verdadero/falso para primaria en México, para un juego contrarreloj.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- Genera EXACTAMENTE el número de afirmaciones solicitado.
+- Cada afirmación es una oración corta y clara (máximo 20 palabras),
+  claramente verdadera o claramente falsa según el tema (nada ambiguo).
+- Aproximadamente la mitad deben ser verdaderas y la mitad falsas, en orden
+  aleatorio.
+- Si se te da un documento adjunto, basa las afirmaciones en su contenido.
+- Lenguaje apropiado para primaria. No uses emojis.
+
+Responde con este JSON exacto:
+{ "afirmaciones": [ { "afirmacion": "string", "correcta": true } ] }"""
+
+
+def generar_contenido_verdadero_falso(
+    tema: str,
+    num_afirmaciones: int,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"Tema: {tema}\nNúmero de afirmaciones a generar: {num_afirmaciones}\n"
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _VERDADERO_FALSO_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=1500)
+    datos = _extraer_json(respuesta_cruda)
+
+    afirmaciones = datos.get("afirmaciones", [])
+    if len(afirmaciones) > num_afirmaciones:
+        afirmaciones = afirmaciones[:num_afirmaciones]
+    return {"afirmaciones": afirmaciones}
+
+
+_CARTEL_SYSTEM_PROMPT = """Eres un asistente que redacta el contenido de un
+cartel o infografía educativa para primaria en México.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- "titulo": corto y llamativo (máximo 6 palabras).
+- "subtitulo": una frase breve que complemente el título (máximo 12 palabras),
+  o cadena vacía si no aplica.
+- "puntos": entre 3 y 6 frases muy cortas (máximo 8 palabras cada una) con la
+  información clave del cartel.
+- "emoji": un solo emoji que ilustre el tema.
+- Lenguaje claro, apropiado para primaria. No uses emojis fuera del campo
+  "emoji".
+
+Responde con este JSON exacto:
+{ "titulo": "string", "subtitulo": "string", "puntos": ["string"], "emoji": "un solo emoji" }"""
+
+
+def generar_contenido_cartel(
+    tema: str,
+    descripcion: str,
+    texto_adjunto: str | None = None,
+) -> dict:
+    contexto = f"Tema del cartel: {tema}\nQué debe transmitir: {descripcion}\n"
+    if texto_adjunto:
+        contexto += f"""
+--- Material de referencia adjuntado por el maestro ---
+{texto_adjunto}
+--- Fin del material ---
+"""
+
+    messages = [
+        {"role": "system", "content": _CARTEL_SYSTEM_PROMPT},
+        {"role": "user", "content": contexto},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.5, max_tokens=800)
+    datos = _extraer_json(respuesta_cruda)
+    return {
+        "titulo": datos.get("titulo", tema),
+        "subtitulo": datos.get("subtitulo", ""),
+        "puntos": datos.get("puntos", []),
+        "emoji": datos.get("emoji", "⭐"),
+    }
+
+
+_LABORATORIO_SYSTEM_PROMPT = """Eres Cuali, asistente pedagógico para maestros
+de primaria en México. Estás en el "Laboratorio": un espacio libre donde el
+maestro puede pedirte que le ayudes a crear cualquier recurso didáctico que
+no encaje en las categorías ya existentes (diapositivas, cuestionarios, mapas
+mentales, juegos, carteles).
+
+Ayuda de forma concreta y práctica. Haz preguntas breves si necesitas más
+contexto, pero no abuses de las preguntas — prioriza proponer contenido
+usable. Cuando el maestro parezca satisfecho con una idea, ofrécete a
+resumirla para que la pueda descargar como documento.
+
+No uses markdown (nada de asteriscos, tablas con barras, encabezados con #).
+Usa texto plano en párrafos cortos, y guiones (-) si necesitas enumerar.
+No uses emojis."""
+
+
+def generar_respuesta_laboratorio(historial: list[dict], nuevo_mensaje: str) -> str:
+    messages = [{"role": "system", "content": _LABORATORIO_SYSTEM_PROMPT}]
+    for m in historial:
+        messages.append({"role": m["role"], "content": m["content"]})
+    messages.append({"role": "user", "content": nuevo_mensaje})
+
+    return chat_completion(messages=messages, temperature=0.6, max_tokens=800)
+
+
+_LABORATORIO_DOC_SYSTEM_PROMPT = """Eres un asistente que convierte una
+conversación de brainstorming entre un maestro y Cuali en un documento final
+descargable.
+
+Reglas estrictas:
+- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después,
+  sin backticks, sin markdown.
+- "titulo": título corto del recurso creado.
+- "contenido": el cuerpo del documento en texto plano, organizado en
+  párrafos. Usa líneas que empiecen con "- " para listas cuando ayude a la
+  claridad. No repitas la conversación completa; sintetiza el resultado final
+  al que llegaron, no el proceso de ir y venir.
+- No uses markdown con asteriscos ni encabezados con #.
+
+Responde con este JSON exacto:
+{ "titulo": "string", "contenido": "string" }"""
+
+
+def generar_documento_laboratorio(historial: list[dict]) -> dict:
+    conversacion_texto = "\n".join(f"{m['role']}: {m['content']}" for m in historial)
+
+    messages = [
+        {"role": "system", "content": _LABORATORIO_DOC_SYSTEM_PROMPT},
+        {"role": "user", "content": f"Conversación:\n{conversacion_texto}"},
+    ]
+
+    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.3, max_tokens=2000)
+    datos = _extraer_json(respuesta_cruda)
+    return {
+        "titulo": datos.get("titulo", "Recurso del Laboratorio"),
+        "contenido": datos.get("contenido", ""),
+    }
