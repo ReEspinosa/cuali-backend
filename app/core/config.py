@@ -80,7 +80,8 @@ class Settings(BaseSettings):
     max_upload_bytes: int = 25 * 1024 * 1024       # 25 MB para /archivos (uploads)
 
     class Config:
-        env_file = ".env"
+            env_file = ".env"
+            extra = "ignore"
 
 
 settings = Settings()

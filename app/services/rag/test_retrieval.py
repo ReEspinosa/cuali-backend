@@ -8,7 +8,7 @@ búsqueda real.
 Uso:
     python test_retrieval.py
 """
-from retrieval import hybrid_search
+from .retrieval import hybrid_search
 
 # Cambia esto por una pregunta relacionada a algo que sepas que está en tus
 # 59 chunks de prueba
