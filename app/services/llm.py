@@ -85,7 +85,7 @@ def _detectar_grado_y_limpiar(texto: str) -> tuple[str | None, str]:
 def _chat_fn(messages: list[dict]) -> str:
     """Puente hacia el cliente LLM ya probado del equipo -- así el RAG usa
     la misma conexión (con Basic Auth) que ya confirmamos que funciona."""
-    return chat_completion(messages=messages, temperature=0.2, max_tokens=2200)
+    return chat_completion(messages=messages, temperature=0.0, max_tokens=2200)
 
 
 def _contenido_con_adjuntos(content: str, adjuntos: list[dict] | None) -> str:

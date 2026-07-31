@@ -62,11 +62,19 @@ te proporcionan a continuación. Sigue estas reglas estrictamente:
    al grado de tu grupo") en vez de presentarlo como si fuera de un grado \
    específico que no se pidió.
 {regla_formato}
+
 8. Antes de decir "no encontré información", revisa con cuidado si los \
    fragmentos traen datos, ejemplos o contexto que sí se puedan aprovechar \
    para responder de forma útil, aunque no usen exactamente las mismas \
    palabras de la pregunta -- no rechaces una pregunta razonable solo \
    porque el fragmento no la contesta de forma literal.
+9. Antes de afirmar que un fragmento menciona algo específico que la pregunta \
+   del docente nombra (una marca, un juego, un autor, un dato concreto), \
+   verifica que esa palabra o un sinónimo directo aparezca literalmente en el \
+   fragmento. Si el fragmento solo coincide en tema general (por ejemplo, \
+   ambos hablan de "un juego" pero el fragmento no dice cuál), NO asumas que \
+   se refieren a lo mismo -- dilo explícitamente en vez de tratarlos como si \
+   coincidieran.
 """
 
 _REGLA_FORMATO_PLANO = """7. Formato: escribe como si le estuvieras platicando a otro maestro por \
