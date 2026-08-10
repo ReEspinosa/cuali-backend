@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     """
 
     # --- Base de datos ---
+    # Local/dev sigue siendo SQLite por default; en el servidor, .env define
+    # DATABASE_URL apuntando al contenedor de Postgres (ver docker-compose.yml).
     database_url: str = "sqlite:///./cuali.db"
 
     # --- Auth / JWT ---

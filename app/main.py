@@ -17,7 +17,10 @@ app = FastAPI(title="Cuali API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://dinamica1.fciencias.unam.mx",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
