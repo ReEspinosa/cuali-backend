@@ -83,18 +83,19 @@ def enviar_mensaje(
     db.refresh(mensaje_usuario)
 
     if payload.use_rag:
-            respuesta_texto, fuentes = generar_respuesta_general(
-                historial=conversacion.mensajes,
-                nuevo_mensaje=payload.content,
-                adjuntos_nuevos=mensaje_usuario.adjuntos,
-            )
-        else:
-            respuesta_texto = generar_respuesta_sin_rag(
-                historial=conversacion.mensajes,
-                nuevo_mensaje=payload.content,
-                adjuntos_nuevos=mensaje_usuario.adjuntos,
-            )
-            fuentes = []
+        respuesta_texto, fuentes = generar_respuesta_general(
+              historial=conversacion.mensajes,
+              nuevo_mensaje=payload.content,
+              adjuntos_nuevos=mensaje_usuario.adjuntos,
+        )
+
+    else:
+        respuesta_texto = generar_respuesta_sin_rag(
+             historial=conversacion.mensajes,
+             nuevo_mensaje=payload.content,
+             adjuntos_nuevos=mensaje_usuario.adjuntos,
+        )
+        fuentes = []
 
     mensaje_asistente = ChatMensaje(
         conversacion_id=conversacion.id,
