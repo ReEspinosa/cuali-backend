@@ -373,6 +373,26 @@ Conversación completa entre el maestro y Cuali:
         "evaluacion": datos.get("evaluacion", ""),
     }
 
+_GENERAL_SIN_RAG_SYSTEM = """Eres Cuali, asistente pedagógico para maestros de primaria en México,
+alineado a la Nueva Escuela Mexicana (NEM).
+
+En este modo NO tienes acceso a los libros de texto de la SEP, así que NO
+cites libros, páginas ni contenido específico de ellos. Responde con tu
+conocimiento general sobre pedagogía, didáctica y el currículo mexicano.
+Sé útil, concreto y práctico. No uses emojis."""
+
+
+def generar_respuesta_sin_rag(
+    historial: list,
+    nuevo_mensaje: str,
+    adjuntos_nuevos: list[dict] | None = None,
+) -> str:
+    pregunta_con_adjuntos = _contenido_con_adjuntos(nuevo_mensaje, adjuntos_nuevos)
+    messages = [{"role": "system", "content": _GENERAL_SIN_RAG_SYSTEM}]
+    for m in historial:
+        messages.append({"role": m.role, "content": _contenido_con_adjuntos(m.content, m.adjuntos)})
+    messages.append({"role": "user", "content": pregunta_con_adjuntos})
+    return chat_completion(messages=messages, temperature=0.4, max_tokens=2200)
 
 def generar_respuesta_general(
     historial: list,

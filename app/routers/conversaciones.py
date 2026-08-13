@@ -11,7 +11,7 @@ from app.schemas.conversacion import (
     ConversacionDetalle,
     ConversacionOut,
 )
-from app.services.llm import generar_respuesta_general
+from app.services.llm import generar_respuesta_general, generar_respuesta_sin_rag
 
 router = APIRouter(prefix="/conversaciones", tags=["conversaciones"])
 
@@ -82,11 +82,19 @@ def enviar_mensaje(
     db.commit()
     db.refresh(mensaje_usuario)
 
-    respuesta_texto, fuentes = generar_respuesta_general(
-        historial=conversacion.mensajes,
-        nuevo_mensaje=payload.content,
-        adjuntos_nuevos=mensaje_usuario.adjuntos,
-    )
+    if payload.use_rag:
+            respuesta_texto, fuentes = generar_respuesta_general(
+                historial=conversacion.mensajes,
+                nuevo_mensaje=payload.content,
+                adjuntos_nuevos=mensaje_usuario.adjuntos,
+            )
+        else:
+            respuesta_texto = generar_respuesta_sin_rag(
+                historial=conversacion.mensajes,
+                nuevo_mensaje=payload.content,
+                adjuntos_nuevos=mensaje_usuario.adjuntos,
+            )
+            fuentes = []
 
     mensaje_asistente = ChatMensaje(
         conversacion_id=conversacion.id,

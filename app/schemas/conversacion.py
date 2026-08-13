@@ -29,11 +29,9 @@ class AdjuntoIn(BaseModel):
 
 
 class ChatMensajeCreate(BaseModel):
-    # 8,000 caracteres es muchísimo para un mensaje escrito por una maestra,
-    # pero corta en seco los prompts gigantes de un bot.
     content: str = Field(min_length=1, max_length=8_000)
     adjuntos: list[AdjuntoIn] = Field(default=[], max_length=5)
-
+    use_rag: bool = True
 
 class ChatMensajeOut(BaseModel):
     id: str
