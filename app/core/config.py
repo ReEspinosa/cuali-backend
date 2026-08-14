@@ -37,10 +37,12 @@ class Settings(BaseSettings):
     # openai_api_key normalmente se deja vacío o con un valor dummy porque
     # LM Studio no valida ese header, pero el cliente OpenAI lo exige como
     # parámetro (no puede ir None).
-    llm_base_url: str = "https://dinamica1.fciencias.unam.mx/lmstudio/v1/"
-    llm_model: str = "openai/gpt-oss-20b"
+    # LLM (servidor UNAM). Antes usaba HTTP Basic Auth; ahora usa API key.
+    llm_base_url: str = "https://dinamica1.fciencias.unam.mx/v1"
+    llm_api_key: str = ""
     llm_user: str = ""
     llm_password: str = ""
+    llm_api_key: str = ""
 
     # Alias por compatibilidad con el .env actual (OPENAI_BASE_URL / OPENAI_MODEL)
     openai_base_url: str = "https://dinamica1.fciencias.unam.mx/lmstudio/v1/"

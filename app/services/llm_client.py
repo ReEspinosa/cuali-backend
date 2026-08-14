@@ -50,6 +50,13 @@ def _llm_slot():
 
 @lru_cache
 def get_llm_client() -> OpenAI:
+    # Si hay API key nueva, se usa directo (sin httpx custom).
+    # Si no, fallback al HTTP Basic Auth viejo por compatibilidad.
+    if settings.llm_api_key:
+        return OpenAI(
+            base_url=settings.llm_base_url,
+            api_key=settings.llm_api_key,
+        )
     http_client = httpx.Client(
         auth=(settings.llm_user, settings.llm_password) if settings.llm_user else None,
         timeout=httpx.Timeout(60.0, connect=10.0),
