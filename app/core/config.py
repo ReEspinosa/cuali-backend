@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     llm_user: str = ""
     llm_password: str = ""
     llm_api_key: str = ""
+    llm_model: str = "openai/gpt-oss-20b"
 
     # Alias por compatibilidad con el .env actual (OPENAI_BASE_URL / OPENAI_MODEL)
     openai_base_url: str = "https://dinamica1.fciencias.unam.mx/lmstudio/v1/"
