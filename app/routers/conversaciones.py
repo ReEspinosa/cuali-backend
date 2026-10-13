@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
+from app.routers.archivos import validar_adjuntos_propios
 from app.db.session import get_db
 from app.models.conversacion import ChatMensaje, Conversacion
 from app.models.user import User
@@ -69,8 +70,8 @@ def enviar_mensaje(
     user: User = Depends(get_current_user),
 ):
     conversacion = _get_conversacion_o_404(conversacion_id, user, db)
+    validar_adjuntos_propios([a.url for a in payload.adjuntos], user, db)
 
-    # Conservamos la versión de tus compañeros (Updated upstream)
     mensaje_usuario = ChatMensaje(conversacion_id=conversacion.id, role="user", content=payload.content)
     
     mensaje_usuario.adjuntos = [a.model_dump() for a in payload.adjuntos]
