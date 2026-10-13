@@ -4,8 +4,11 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
+from app.db.session import get_db
+from app.models.archivo import RecursoGenerado
 from app.models.user import User
 from app.services.llm import (
     ajustar_contenido_cuestionario,
@@ -33,6 +36,35 @@ router = APIRouter(prefix="/recursos", tags=["recursos"])
 TIPOS_PREGUNTA_VALIDOS = {"opcion_multiple", "verdadero_falso", "abierta", "mixto"}
 
 
+def _registrar_recurso(db: Session, recurso_id: str, user: User, tipo: str) -> None:
+    """Guarda quien genero el recurso para validar las descargas. O(log n)."""
+    db.add(RecursoGenerado(id=recurso_id, owner_id=user.id, tipo=tipo))
+    db.commit()
+
+
+def _recurso_propio_o_404(recurso_id: str, tipo: str, user: User, db: Session) -> str:
+    """
+    Valida que el recurso exista, sea del tipo pedido y pertenezca al usuario.
+    Antes solo se pedia sesion: cualquier docente podia descargar (o, en el
+    caso del cuestionario, sobrescribir) el recurso de otro conociendo su id.
+    Se responde 404 tambien cuando es de otro, para no confirmar que existe.
+    Devuelve el id normalizado, seguro para construir la ruta en disco.
+    Costo: O(log n) por la busqueda por llave primaria.
+    """
+    no_encontrado = HTTPException(
+        status_code=404,
+        detail="Este recurso ya no está disponible. Genera uno nuevo.",
+    )
+    try:
+        recurso_id = str(uuid.UUID(recurso_id))
+    except ValueError:
+        raise no_encontrado
+    registro = db.get(RecursoGenerado, recurso_id)
+    if registro is None or registro.owner_id != user.id or registro.tipo != tipo:
+        raise no_encontrado
+    return recurso_id
+
+
 class DiapositivasCreate(BaseModel):
     titulo: str
     descripcion: str
@@ -45,6 +77,7 @@ class DiapositivasCreate(BaseModel):
 def crear_diapositivas(
     payload: DiapositivasCreate,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     if payload.tema_color not in TEMAS:
         raise HTTPException(status_code=400, detail=f"Tema de color inválido. Opciones: {', '.join(TEMAS)}")
@@ -63,6 +96,7 @@ def crear_diapositivas(
         "diapositivas": contenido["diapositivas"],
     }
     generar_pptx_diapositivas(recurso_id, datos)
+    _registrar_recurso(db, recurso_id, user, "diapositivas")
 
     return {
         "id": recurso_id,
@@ -77,7 +111,9 @@ def crear_diapositivas(
 def descargar_pptx(
     recurso_id: str,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
+    recurso_id = _recurso_propio_o_404(recurso_id, "diapositivas", user, db)
     path = os.path.join("generated_docs", f"diapositivas_{recurso_id}.pptx")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Estas diapositivas ya no están disponibles. Genera unas nuevas.")
@@ -117,6 +153,7 @@ def _validar_tipo(tipo: str) -> None:
 def crear_cuestionario(
     payload: CuestionarioCreate,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     _validar_tipo(payload.tipo_preguntas)
 
@@ -131,6 +168,7 @@ def crear_cuestionario(
     recurso_id = str(uuid.uuid4())
     datos = {"titulo": payload.titulo, "preguntas": contenido["preguntas"]}
     generar_docx_cuestionario(recurso_id, datos)
+    _registrar_recurso(db, recurso_id, user, "cuestionario")
 
     return {
         "id": recurso_id,
@@ -147,7 +185,11 @@ def ajustar_cuestionario(
     recurso_id: str,
     payload: CuestionarioAjustar,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
+    # Se valida ANTES de llamar al LLM: no se gasta cuota en una peticion
+    # que de todos modos se va a rechazar.
+    recurso_id = _recurso_propio_o_404(recurso_id, "cuestionario", user, db)
     _validar_tipo(payload.tipo_preguntas)
 
     contenido = ajustar_contenido_cuestionario(
@@ -175,7 +217,9 @@ def ajustar_cuestionario(
 def descargar_cuestionario_docx(
     recurso_id: str,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
+    recurso_id = _recurso_propio_o_404(recurso_id, "cuestionario", user, db)
     path = os.path.join("generated_docs", f"cuestionario_{recurso_id}.docx")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Este cuestionario ya no está disponible. Genera uno nuevo.")
@@ -398,6 +442,7 @@ class LaboratorioGenerar(BaseModel):
 def laboratorio_generar(
     payload: LaboratorioGenerar,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     if len(payload.historial) < 2:
         raise HTTPException(
@@ -408,6 +453,7 @@ def laboratorio_generar(
     contenido = generar_documento_laboratorio(payload.historial)
     recurso_id = str(uuid.uuid4())
     generar_docx_laboratorio(recurso_id, contenido["titulo"], contenido["contenido"])
+    _registrar_recurso(db, recurso_id, user, "laboratorio")
 
     return {
         "id": recurso_id,
@@ -421,7 +467,9 @@ def laboratorio_generar(
 def descargar_laboratorio_docx(
     recurso_id: str,
     user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
+    recurso_id = _recurso_propio_o_404(recurso_id, "laboratorio", user, db)
     path = os.path.join("generated_docs", f"laboratorio_{recurso_id}.docx")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Este documento ya no está disponible. Genera uno nuevo.")

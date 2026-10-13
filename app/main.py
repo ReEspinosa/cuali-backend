@@ -1,17 +1,38 @@
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
-import os
+from sqlalchemy import text
 
 from app.core.config import settings
 from app.core.llm_quota import llm_user_quota
 from app.core.rate_limit import client_ip, limiter
 from app.db.session import Base, engine
-from app.models import comunidad, conversacion, planeacion, user  # noqa: F401
-from app.routers import archivos, auth, comunidad as comunidad_router, conversaciones, planeaciones, recursos
+from app.models import archivo, comunidad, conversacion, planeacion, retroalimentacion, user  # noqa: F401
+from app.routers import (
+    archivos,
+    auth,
+    comunidad as comunidad_router,
+    conversaciones,
+    planeaciones,
+    recursos,
+    retroalimentacion as retroalimentacion_router,
+)
 
 Base.metadata.create_all(bind=engine)
+
+# create_all crea tablas nuevas, pero NO agrega indices a tablas que ya
+# existian en produccion. Estos CREATE INDEX IF NOT EXISTS son idempotentes
+# (funcionan igual en Postgres y en SQLite) y cubren las consultas del feed
+# de comunidad. Sin ellos, contar likes o comentarios de una publicacion
+# recorre toda la tabla: O(n) en vez de O(log n).
+_INDICES = (
+    "CREATE INDEX IF NOT EXISTS ix_comentarios_publicacion_id ON comentarios (publicacion_id)",
+    "CREATE INDEX IF NOT EXISTS ix_publicaciones_created_at ON publicaciones (created_at)",
+    "CREATE INDEX IF NOT EXISTS ix_likes_usuario_id ON likes (usuario_id)",
+)
+with engine.begin() as _conn:
+    for _sql in _INDICES:
+        _conn.execute(text(_sql))
 
 app = FastAPI(title="Cuali API", version="0.1.0")
 
@@ -82,10 +103,13 @@ app.include_router(auth.router)
 app.include_router(planeaciones.router, dependencies=[Depends(llm_user_quota)])
 app.include_router(conversaciones.router, dependencies=[Depends(llm_user_quota)])
 
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-
+# Los archivos ya NO se montan como carpeta estatica publica: antes,
+# cualquiera con la URL (incluso sin sesion) podia descargar lo que subio un
+# docente. Ahora pasan por app/routers/archivos.py, que valida sesion y
+# dueno, o una URL firmada con caducidad.
 app.include_router(archivos.router)
+app.include_router(archivos.router_legacy)
+app.include_router(retroalimentacion_router.router)
 app.include_router(recursos.router, dependencies=[Depends(llm_user_quota)])
 app.include_router(comunidad_router.router)
 

@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
+from app.routers.archivos import validar_adjuntos_propios
 from app.db.session import get_db
 from app.models.planeacion import Mensaje, Planeacion
 from app.models.user import User
@@ -69,6 +70,7 @@ def enviar_mensaje(
     user: User = Depends(get_current_user),
 ):
     planeacion = _get_planeacion_o_404(planeacion_id, user, db)
+    validar_adjuntos_propios([a.url for a in payload.adjuntos], user, db)
 
     mensaje_usuario = Mensaje(planeacion_id=planeacion.id, role="user", content=payload.content)
     mensaje_usuario.adjuntos = [a.model_dump() for a in payload.adjuntos]
