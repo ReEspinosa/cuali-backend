@@ -22,3 +22,4 @@ app/services/rag/data/
 # adjuntos que suben los usuarios -- no son código, no se versionan.
 generated_docs/
 uploads/
+.venv/

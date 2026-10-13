@@ -18,7 +18,9 @@ class Publicacion(Base):
     visibilidad = Column(String, nullable=False, default="publico")  # "publico" | "escuela"
     imagenes_json = Column(Text, nullable=False, default="[]")  # lista de URLs, como JSON string
 
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    # Indice para que el feed (ORDER BY created_at DESC LIMIT k) cueste
+    # O(log n + k) en vez de ordenar toda la tabla.
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     updated_at = Column(
         DateTime,
         default=lambda: datetime.now(timezone.utc),
@@ -44,7 +46,7 @@ class Comentario(Base):
     __tablename__ = "comentarios"
 
     id = Column(String, primary_key=True, default=gen_uuid)
-    publicacion_id = Column(String, ForeignKey("publicaciones.id"), nullable=False)
+    publicacion_id = Column(String, ForeignKey("publicaciones.id"), nullable=False, index=True)
     autor_id = Column(String, ForeignKey("users.id"), nullable=False)
     parent_id = Column(String, ForeignKey("comentarios.id"), nullable=True)
 
