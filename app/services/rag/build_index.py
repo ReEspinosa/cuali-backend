@@ -89,7 +89,7 @@ def main():
     # sin sentido).
     save_active_provider(provider, model)
 
-    print(f"\n✅ Índice construido en {config.CHROMA_DIR} con {len(records)} chunks "
+    print(f"\nListo: Índice construido en {config.CHROMA_DIR} con {len(records)} chunks "
           f"(proveedor: {provider}).")
 
 

@@ -1,0 +1,367 @@
+{
+  "fase": 5,
+  "grado": 6,
+  "fuente": "https://educacionbasica.sep.gob.mx/wp-content/uploads/2024/06/Programa_Sintetico_Fase_5.pdf",
+  "campos_formativos": [
+    {
+      "campo_formativo": "Lenguajes",
+      "contenidos": [
+        {
+          "contenido": "Narración de sucesos autobiográficos.",
+          "pda_6": "Lee textos autobiográficos e identifica las relaciones temporales de secuencia, simultaneidad y duración. Analiza distintos sucesos de su vida para elegir los más significativos y organizarlos de manera coherente en una narración. Determina al destinatario y la forma en que desea narrar sucesos autobiográficos significativos, para causar efectos particulares. Usa reflexivamente adverbios, frases adverbiales y nexos temporales, para indicar secuencia, simultaneidad y duración en los sucesos narrados. Colabora en la edición de un libro de textos autobiográficos, y sugiere formas de reproducirlo para que cada alumna y alumno tenga el suyo."
+        },
+        {
+          "contenido": "Comprensión y producción de textos explicativos.",
+          "pda_6": "Localiza y lee textos explicativos de temas variados. Expresa con sus palabras las ideas que comprende de los textos que lee y elabora resúmenes que le permitan reconstruir las ideas principales y los elementos de los textos explicativos. Reconoce y emplea relaciones de causa-consecuencia. Emplea palabras como primero, finalmente, luego, después, posteriormente, durante, para organizar las oraciones. Establece relaciones causales y emplea expresiones como en consecuencia, por lo tanto, debido a, a causa de, porque, por consiguiente. Distingue sus propias palabras de la paráfrasis y citas textuales, y registra la información bibliográfica de las fuentes consultadas. Utiliza palabras nuevas y/o técnicas en el texto explicativo que produce para compartir."
+        },
+        {
+          "contenido": "Participación en debates sobre temas de interés común.",
+          "pda_6": "Identifica la función de los conectivos causales, temporales y lógicos en textos argumentativos. Escucha y opina de manera crítica durante su desempeño como participante, moderador, moderadora o público en un debate."
+        },
+        {
+          "contenido": "Comprensión y producción de textos argumentativos.",
+          "pda_6": "Lee textos sobre temas polémicos, e identifica los argumentos que sustentan cada postura. Registra los principales argumentos y las conclusiones de las autoras y los autores de los textos leídos. Reflexiona sobre la relación entre los argumentos principales y las conclusiones. Escribe un texto, a partir de las ideas que registró, en el que expresa sus propias opiniones sobre los temas tratados, y en el que emplea nexos que anteceden los argumentos, como porque, ya que, si bien, en consecuencia."
+        },
+        {
+          "contenido": "Comprensión y producción de textos informativos, para ampliar sus conocimientos sobre temas de interés tanto colectivo como individual.",
+          "pda_6": "Lee textos informativos y reflexiona sobre su organización. Identifica información específica sobre asuntos de su interés, y comprende el tema central. Reconoce vínculos entre el contenido de textos informativos, respecto del contraste, la complementariedad y la causa-consecuencia del tema abordado. Escribe textos informativos en los que registra, de manera convencional, los datos de las fuentes consultadas: autor, título, editorial, fecha y lugar de publicación, páginas consultadas, etcétera."
+        },
+        {
+          "contenido": "Comprensión y producción de textos discontinuos, para organizar y presentar información.",
+          "pda_6": "Reconoce, mediante el análisis, las características y funciones de los textos discontinuos, en particular de gráficas, cuadros sinópticos y mapas conceptuales. Reflexiona sobre las posibilidades de los textos discontinuos para organizar la información que expone a otras personas. Sintetiza información, sin perder el significado original, para organizarla y presentarla por medio de textos discontinuos. Produce textos discontinuos, considerando al destinatario y empleando elementos gráficos útiles para organizar y presentar información, como tipografía, viñetas, espacios de la página, interlineado, signos de puntuación, mayúsculas y minúsculas."
+        },
+        {
+          "contenido": "Elaboración e intercambio de reseñas de diversos textos y/o audiovisuales.",
+          "pda_6": "Explica la utilidad de las reseñas y comenta sus características. Describe el material audiovisual consultado y registra los datos de identificación de este: título, tema, director, protagonistas, institución o empresa productora, fecha de realización, etcétera. Elabora una opinión sustentada acerca de un material reseñado. Usa conectores como porque, ya que, puesto que, por, debido a, etcétera, con los que apoya la argumentación de sus opiniones. Revisa y corrige reiteraciones innecesarias, y errores de concordancia y ortografía en general."
+        },
+        {
+          "contenido": "Comparación y producción de documentos que regulan la convivencia.",
+          "pda_6": "Reconoce la función e importancia de cumplir las pautas o normas establecidas en reglamentos para regular la convivencia. Reflexiona y comprende la concisión de las reglas, el empleo de verbos (modo y tiempo) y el uso de numerales. Escribe las reglas para lograr una convivencia respetuosa, incluyente, equitativa e igualitaria en la escuela, tomando en consideración sus experiencias a lo largo de la primaria. Utiliza oraciones breves y decide si debe emplear subtítulos, viñetas o incisos. Revisa y corrige errores en cuanto al contenido, concordancia y ortografía en el texto, hasta que logra la versión final del reglamento escolar."
+        },
+        {
+          "contenido": "Exposición sobre temas relacionados con el cuidado de la salud.",
+          "pda_6": "Como presentador o presentadora: elabora un guion para presentar de manera ordenada la información investigada en diversas fuentes; prepara diversos materiales de apoyo; usa un léxico formal y mantiene o recupera la atención de la audiencia con inflexiones de voz, ademanes, gestos, preguntas; aclara dudas y atiende comentarios u opiniones. Como audiencia: comprende lo que escucha, apunta lo que le interesa, pregunta y comenta sobre lo expuesto, y argumenta sus opiniones y divergencias."
+        },
+        {
+          "contenido": "Producción y envío de cartas personales.",
+          "pda_6": "Lee distintas cartas personales reales y literarias y analiza sus características. Discute sobre las similitudes y diferencias, así como sobre las ventajas y desventajas del correo postal y el electrónico. Reconoce la estructura de la información de las direcciones postales y electrónicas de destinatarias, destinatarios y remitentes. Expresa sentimientos, ideas y experiencias por medio de cartas, empleando adverbios de tiempo y lugar. Envía las cartas que escribe a través del correo postal y/o electrónico."
+        },
+        {
+          "contenido": "Interpretación y producción de anuncios publicitarios de productos o servicios ofrecidos en la comunidad.",
+          "pda_6": "Recopila y analiza anuncios publicitarios elaborados con distintos fines (comerciales, políticos, sociales). Reflexiona sobre las características y funciones de las frases publicitarias, y analiza el uso de estereotipos, frases sugestivas, juegos de palabras y demás recursos lingüísticos y gráficos. Adopta una postura crítica ante los mensajes publicitarios y discute sobre ella con sus compañeras y compañeros. Elabora anuncios publicitarios sobre productos y servicios de su comunidad, considerando la disposición gráfica y recursos retóricos. Difunde con la comunidad los anuncios elaborados, así como su postura crítica."
+        },
+        {
+          "contenido": "Seguimiento crítico de noticias en diferentes medios de comunicación escrita.",
+          "pda_6": "Consulta distintos medios de comunicación escrita y selecciona noticias de su interés, justificando las razones de su elección. Da seguimiento a las noticias e identifica las fuentes de las que proviene la información. Identifica relaciones de contraste, complementariedad, causa-consecuencia y temporalidad entre distintas notas informativas sobre el mismo hecho noticioso. Reflexiona sobre las diferentes formas de expresar y abordar el mismo hecho noticioso en distintos medios. Escribe y comparte sus conclusiones sobre el hecho noticioso."
+        },
+        {
+          "contenido": "Comprensión y producción de textos para gestionar servicios públicos.",
+          "pda_6": "Reconoce la utilidad de los formularios para gestionar servicios públicos. Dialoga con sus pares sobre los servicios públicos que podrían gestionar, define cuál gestionarán y averiguan a qué persona o institución dirigirse. Reflexiona sobre las características de las cartas formales. Escribe con sus compañeras y compañeros una carta formal explicando el servicio que solicitan y las razones. Emplea mayúsculas y signos de puntuación para ordenar oraciones y párrafos. Envía, con apoyo docente, la carta formal y le da seguimiento a la solicitud."
+        },
+        {
+          "contenido": "Elaboración de un tríptico informativo sobre la prevención de algún problema colectivo.",
+          "pda_6": "Comparte con sus compañeras y compañeros la información investigada y dialoga para elegir el problema colectivo sobre el que harán un tríptico informativo. Investiga con mayor profundidad sobre el problema elegido e integra la información en un texto breve que incluirán en un tríptico con portada, imágenes, gráficas, tablas, cuadros, fuentes de consulta, datos de personas o instituciones de apoyo. Presenta y difunde el tríptico con la comunidad."
+        },
+        {
+          "contenido": "Reconocimiento de la diversidad lingüística de México.",
+          "pda_6": "Reflexiona sobre la diversidad lingüística en México y valora su riqueza. Identifica qué lenguas se hablan en su familia, localidad y/o región. Investiga sobre las lenguas que se hablan en su familia, localidad y/o región, por medio de entrevistas y fuentes impresas y electrónicas. Escribe un texto sobre los resultados de su investigación, empleando comillas y referencias de las fuentes consultadas. Reflexiona sobre las diferentes formas de valorar las lenguas en diversos contextos y sobre las posibles razones por las que esto ocurre."
+        },
+        {
+          "contenido": "Interpretación y valoración de manifestaciones culturales y artísticas de México y del mundo.",
+          "pda_6": "Analiza las partes y elementos que conforman una manifestación cultural o artística, y reconoce la multiplicidad de significados, puntos de vista y concepciones del mundo en ella. Reconoce símbolos presentes en manifestaciones culturales y artísticas, a partir del análisis e interpretación de formas, colores, texturas, sonidos, objetos, aromas, movimientos y gestos que contienen."
+        },
+        {
+          "contenido": "Apropiación e intervención artística en el espacio comunitario.",
+          "pda_6": "Reflexiona en colectivo acerca de las maneras en que un espacio puede ser mejorado, y lo lleva a cabo mediante la planeación de expresiones artísticas (performance, videoarte, instalación, escultura, teatro comunitario). Representa en colectivo problemas de la comunidad para visibilizarlos mediante propuestas artísticas. Crea producciones artísticas con distintos lenguajes para transformar de manera efímera o permanente un espacio público de la comunidad, a favor del bienestar social."
+        },
+        {
+          "contenido": "Análisis de cuentos y poemas para su disfrute y comprensión.",
+          "pda_6": "Selecciona y lee cuentos y poemas del mundo a partir de sus intereses y gustos. Intercambia con sus pares los cuentos y poemas que más le gustaron, y discute sobre su significado. Reconoce las características de cuentos y poemas. Elabora una antología con los textos seleccionados y de producción propia, que incluya título, portada, portadilla, índice, ilustraciones y comentarios de interpretación. Comparte la antología con la comunidad educativa y deja un ejemplar en la biblioteca escolar."
+        },
+        {
+          "contenido": "Combinación de elementos visuales, sonoros y corporales, en composiciones artísticas colectivas, para expresar rasgos de sus identidades personal y colectiva.",
+          "pda_6": "Recrea lugares y experiencias significativas, a partir de una composición visual colectiva que sonoriza con objetos a su alcance, mientras la narra en un audiovisual. Combina secuencias de formas, colores, texturas, sonidos, movimientos, gestos y objetos, para explorar distintas maneras de expresar, en colectivo, una misma experiencia con distintos elementos."
+        },
+        {
+          "contenido": "Expresión, mediante el uso de los lenguajes artísticos, de experiencias estéticas que tienen lugar en la naturaleza.",
+          "pda_6": "Aprecia la disposición de formas, colores, texturas, sonidos y movimientos en el entorno natural y usa elementos de los lenguajes artísticos para representar una experiencia significativa de sus vínculos con la naturaleza."
+        },
+        {
+          "contenido": "Creación y representación de narrativas a partir de acontecimientos relevantes de la comunidad, empleando recursos literarios, visuales, corporales y sonoros.",
+          "pda_6": "Explora, en colectivo, movimientos, gestos, formas, colores, sonidos y silencios, y acuerda una estructura creativa para crear un acontecimiento improvisado (flashmob) en su escuela o en la comunidad, donde se invite a todas las personas a participar en el momento en que se está llevando a cabo."
+        },
+        {
+          "contenido": "Combinación de la realidad y la ficción en elementos simbólicos de las manifestaciones culturales y artísticas, que dan identidad y sentido de pertenencia.",
+          "pda_6": "Infiere la intención del autor o autora al utilizar movimiento, gesto, forma, sonido y/o color en una manifestación cultural y artística, y compara sus ideas con las de sus pares. Reinterpreta una manifestación cultural o artística con un lenguaje artístico distinto al que se utilizó en su creación, para crear nuevas formas de simbolización. Aprecia y recrea una danza ritual colectiva, con elementos simbólicos propios de cada participante."
+        },
+        {
+          "contenido": "Análisis y representación de guiones teatrales.",
+          "pda_6": "Formula comentarios críticos respecto de un guion teatral de su elección, para expresar sus gustos, intereses e ideas, así como para desarrollar la argumentación. Realiza una representación teatral en colectivo, jugando con combinaciones de secuencias de sonidos y movimientos rápidos, lentos, agudos, graves, fuertes, débiles, pausas y con acentos variados. Emplea diversos elementos de los lenguajes artísticos para crear escenografía, vestuario y maquillaje en la escenificación de una obra de teatro infantil o una situación improvisada, invitando a familiares y otros miembros de la comunidad como espectadores."
+        },
+        {
+          "contenido": "Lectura y análisis de mitos y leyendas, para su disfrute y valoración.",
+          "pda_6": "Lee mitos y leyendas de México y del mundo, y reconoce las características y funciones de cada tipo de texto. Analiza mitos y leyendas de México y del mundo, y discute sobre su significado. Distingue las diferencias y similitudes entre los mitos y leyendas. Recupera mitos y leyendas con las personas de su comunidad y de libros, y las compila. Elabora un compendio de mitos y leyendas para compartir, que incluye título, portada, portadilla, introducción e índice. Representa un mito o leyenda de su interés mediante una escultura, cómic, performance, entre otros."
+        }
+      ]
+    },
+    {
+      "campo_formativo": "Saberes y Pensamiento Científico",
+      "contenidos": [
+        {
+          "contenido": "Estructura y funcionamiento del cuerpo humano: sistemas circulatorio, respiratorio e inmunológico, y su relación con la salud ambiental, así como acciones para su cuidado.",
+          "pda_6": "Describe los beneficios y practica acciones para fortalecer y cuidar el sistema inmunológico: vacunación, higiene, alimentación saludable, consumo de agua simple potable, descanso, actividades físicas y recreativas. Argumenta la importancia de las vacunas como aportes científicos y tecnológicos para prevenir enfermedades transmisibles y de la Cartilla Nacional de Salud, así como de prácticas culturales para prevenirlas. Explica los factores que ponen en riesgo la salud y aquellos que la favorecen, y propone acciones para reducir la propagación de enfermedades transmisibles en los entornos familiar, escolar y comunitario."
+        },
+        {
+          "contenido": "Etapas del desarrollo humano: proceso de reproducción y prevención de infecciones de transmisión sexual (ITS) y embarazos en adolescentes, en el marco de la salud sexual y reproductiva.",
+          "pda_6": "Analiza y argumenta las implicaciones y riesgos del embarazo a temprana edad o en adolescentes, y las consecuencias en los ámbitos de salud, personal, familiar, educativo, social y económico. Toma decisiones responsables e informadas relacionadas con la salud sexual y reproductiva. Compara y argumenta ventajas y desventajas de conductas sexuales responsables para evitar embarazos e ITS, incluido el VIH. Analiza creencias e ideas falsas en torno a las ITS. Reconoce que el consumo de alcohol y otras sustancias adictivas, entre otros factores, propician conductas violentas vinculadas al ejercicio de la sexualidad."
+        },
+        {
+          "contenido": "Alimentación saludable: características de la dieta correcta, costumbres de la comunidad, riesgos del consumo de alimentos ultraprocesados, y acciones para mejorar la alimentación.",
+          "pda_6": "Establece relaciones entre problemas asociados a la alimentación (sobrepeso, obesidad, desnutrición) con factores de riesgo como el consumo de alimentos y bebidas ultraprocesadas; analiza causas y riesgos de trastornos como anorexia y bulimia. Analiza etiquetas de productos para conocer ingredientes, contenido y aporte nutrimental. Propone platillos para el consumo familiar con alimentos regionales y de temporada, saludables y a bajo costo. Propone y practica acciones para prevenir enfermedades no transmisibles vinculadas a factores protectores como actividad física diaria y alimentación baja en azúcares, sal y grasas."
+        },
+        {
+          "contenido": "Funciones vitales que caracterizan a plantas y animales como seres vivos, y su relación con el entorno natural, así como sus cambios a través del tiempo.",
+          "pda_6": "Comprende y explica la importancia de los fósiles como evidencia para la reconstrucción de la vida en el pasado, su relación con organismos y entornos actuales, y la evolución de los seres vivos; describe cómo se lleva a cabo el proceso de fosilización a partir de construir modelos. Propone y practica acciones para cuidar a los seres vivos actuales y prevenir su extinción. Comprende que las funciones vitales de nutrición, reproducción y relación con el entorno natural caracterizan a los seres vivos, incluido el ser humano."
+        },
+        {
+          "contenido": "Factores que conforman la biodiversidad y el medio ambiente, la riqueza natural de México y su relevancia como parte del patrimonio biocultural de la humanidad, y la importancia de su conservación.",
+          "pda_6": "Comprende que el medio ambiente es el conjunto de componentes naturales (factores biológicos y físicos) en interacción con los componentes sociales (culturales, económicos, científicos, tecnológicos y políticos). Analiza situaciones relacionadas con problemas medioambientales de la comunidad y el impacto en la salud ambiental. Propone y practica acciones que favorecen el cuidado del medio ambiente."
+        },
+        {
+          "contenido": "Pérdida de biodiversidad, problemas medioambientales en la comunidad, México y el mundo, acciones orientadas a fortalecer estilos de vida sustentables.",
+          "pda_6": "Analiza y explica algunos problemas medioambientales de la comunidad, México y el mundo, sus causas y consecuencias en la salud ambiental. Comprende que el efecto invernadero es un proceso natural que favorece la vida en el planeta; establece relaciones entre su alteración, la contaminación del aire y el cambio climático. Indaga y propone acciones orientadas a promover el consumo responsable en la escuela, familia y comunidad. Indaga proyectos de mejora del medio ambiente desarrollados por pueblos, culturas, organizaciones civiles y dependencias estatales o nacionales."
+        },
+        {
+          "contenido": "Costos y beneficios del consumo de agua, energía eléctrica y combustibles en la satisfacción de necesidades personales.",
+          "pda_6": "Describe en qué actividades de la casa y la escuela se utilizan recursos energéticos (energía eléctrica y combustibles) y analiza cómo impactan en el medio ambiente. Indaga y calcula el consumo de energía eléctrica, gas o carbón utilizado en cada actividad, y practica acciones para disminuir su consumo. Analiza el costo ambiental del uso de combustibles y energía eléctrica para tomar decisiones de consumo responsable."
+        },
+        {
+          "contenido": "Propiedades de los materiales: dureza, flexibilidad y permeabilidad y su aplicación en la satisfacción de necesidades; caracterización de los gases con base en sus propiedades.",
+          "pda_6": "Diseña y construye objetos con base en las propiedades de dureza, flexibilidad y permeabilidad de algunos materiales. Analiza la relevancia de los materiales como aporte de la ciencia y la tecnología, así como los efectos de su uso inadecuado o poco ético en el medio ambiente. Describe propiedades de los gases al contrastarlos con sólidos y líquidos (volumen, compresibilidad, fluidez). Comprende que los gases tienen masa. Describe los cambios de volumen que presenta un gas a partir de la variación de temperatura."
+        },
+        {
+          "contenido": "Cambios permanentes en los materiales y sus implicaciones en la vida diaria.",
+          "pda_6": "Explica la combustión y la oxidación de diferentes materiales como cambios permanentes, los factores que intervienen e identifica sus implicaciones en la vida diaria. Plantea y comprueba hipótesis relacionadas con la combustión. Identifica y describe la oxidación de materiales en su entorno. Indaga y describe las implicaciones medioambientales, económicas y sociales de los procesos de combustión y oxidación."
+        },
+        {
+          "contenido": "Efecto del magnetismo y de la fuerza de gravedad.",
+          "pda_6": "Describe el efecto de la fuerza gravitacional sobre los cuerpos, a partir de experimentar con la caída y reposo de objetos. Comprende que la masa es la cantidad de materia de un cuerpo, a diferencia del peso, que es la fuerza con la que la Tierra atrae dicho cuerpo por acción de la gravedad, a partir de actividades prácticas o simuladores, e identifica que el tiempo de caída es independiente de la masa."
+        },
+        {
+          "contenido": "Transformaciones de la energía térmica y eléctrica, así como su aplicación tecnológica.",
+          "pda_6": "Comprende que la electricidad es una forma de energía caracterizada por el movimiento o acumulación de cargas eléctricas, y experimenta con propiedades de conducción o aislamiento eléctrico. Describe los dos tipos de cargas eléctricas (positiva y negativa) y las interacciones entre objetos cargados. Reconoce materiales conductores y aislantes y los aplica en un circuito eléctrico. Reflexiona acerca del uso de la energía eléctrica y el impacto negativo en el medio ambiente que produce su generación y consumo."
+        },
+        {
+          "contenido": "Sistema Solar y Universo: características de sus componentes, y aportaciones culturales, científicas y tecnológicas que han favorecido su conocimiento.",
+          "pda_6": "Describe características de forma, ubicación, tamaño, distancia, color y temperatura de algunos componentes del Universo: galaxias y estrellas. Describe las características principales de la Vía Láctea, y la reconoce como la galaxia en la que se ubica el Sistema Solar. Indaga, argumenta y valora la importancia de aportaciones culturales, científicas y tecnológicas (telescopios, satélites artificiales y sondas espaciales) en la investigación y conocimiento del Universo."
+        },
+        {
+          "contenido": "Estudio de los números.",
+          "pda_6": "Expresa oralmente la sucesión numérica hasta billones, de manera ascendente y descendente a partir de un número natural dado. Ordena, lee y escribe números naturales de más de nueve cifras e interpreta números decimales en diferentes contextos. Identifica semejanzas y diferencias entre el sistema de numeración decimal y otros sistemas como el maya y el romano."
+        },
+        {
+          "contenido": "Suma y resta, su relación como operaciones inversas.",
+          "pda_6": "A partir de situaciones problemáticas vinculadas a diferentes contextos, suma y resta números decimales y fracciones con diferentes denominadores. Utiliza, explica y comprueba sus estrategias para calcular mentalmente sumas y restas de dos números decimales hasta centésimos."
+        },
+        {
+          "contenido": "Multiplicación y división, su relación como operaciones inversas.",
+          "pda_6": "Resuelve situaciones problemáticas vinculadas a diferentes contextos que implican dividir números decimales entre naturales, y dividir números fraccionarios entre números naturales."
+        },
+        {
+          "contenido": "Relaciones de proporcionalidad.",
+          "pda_6": "A partir de situaciones problemáticas de proporcionalidad, determina valores faltantes en las que en ocasiones se conoce el valor unitario y en otras no. Resuelve situaciones que implican comparar razones expresadas con dos números naturales y con una fracción. Calcula mentalmente los porcentajes 50%, 25%, 10% y 1% de un número natural. Resuelve situaciones que implican calcular el tanto por ciento de una cantidad o el porcentaje que representa una cantidad de otra."
+        },
+        {
+          "contenido": "Cuerpos geométricos y sus características.",
+          "pda_6": "Explora y reconoce las características del cilindro y cono; anticipa y comprueba desarrollos planos que permiten construirlos."
+        },
+        {
+          "contenido": "Figuras geométricas y sus características.",
+          "pda_6": "Identifica y comprueba en diferentes objetos y dibujos con forma circular, la relación que existe entre la circunferencia y el diámetro (valor aproximado de π). Utiliza instrumentos geométricos para trazar polígonos regulares."
+        },
+        {
+          "contenido": "Ubicación espacial.",
+          "pda_6": "Resuelve situaciones que requieren ubicar puntos en el primer cuadrante del plano cartesiano."
+        },
+        {
+          "contenido": "Medición de longitud, masa y capacidad.",
+          "pda_6": "Resuelve situaciones problemáticas vinculadas a diferentes contextos que requieren calcular longitudes, masas o capacidades utilizando unidades convencionales, además del kilómetro y la tonelada."
+        },
+        {
+          "contenido": "Perímetro, área y noción de volumen.",
+          "pda_6": "Resuelve situaciones problemáticas que implican calcular el perímetro y área de figuras compuestas por triángulos y cuadriláteros. Resuelve problemas que implican construir, estimar y comparar el volumen de cuerpos y prismas rectos rectangulares mediante el conteo de cubos, y reconoce que existen diferentes cuerpos con el mismo volumen."
+        },
+        {
+          "contenido": "Organización e interpretación de datos.",
+          "pda_6": "Genera y organiza datos, determina la moda, la media aritmética y el rango para responder preguntas vinculadas a diferentes contextos."
+        },
+        {
+          "contenido": "Nociones de probabilidad.",
+          "pda_6": "A partir de distintas situaciones azarosas, determina los resultados posibles y los representa en tablas de doble entrada o en diagramas de árbol."
+        }
+      ]
+    },
+    {
+      "campo_formativo": "Ética, Naturaleza y Sociedades",
+      "contenidos": [
+        {
+          "contenido": "Valoración de la biodiversidad en el territorio donde se ubica la localidad, entidad, México y el mundo, valores y acciones sustentables.",
+          "pda_6": "Comprende la biodiversidad en la Tierra, su sistema de relaciones e interdependencia global.\n\nInterpreta representaciones cartográficas de la riqueza en biodiversidad de continentes (África, América, Antártida, Asia, Europa, Oceanía), aguas oceánicas y continentales.\n\nExplica los procesos ecosistémicos de la biodiversidad, en relación con la circulación de energía, mediante las interacciones entre los seres humanos, otros seres vivos, el agua, el aire y el suelo, así como sus beneficios ambientales.\n\nComprende relaciones sociales económicas, culturales y políticas en diversas interacciones mediadas por intereses (formas de producción, abastecimiento, distribución, estilos de consumo en el mundo, percepciones del entorno, tradiciones alimenticias, culturales, identidad cultural, sentido de pertenencia, inspiración estética o espiritual), así como formas de concebir la naturaleza, que favorecen relaciones armónicas o desfavorecen su integridad y su función para la vida incidiendo en el desbalance de la biósfera como lo evidencia el cambio climático.\n\nAnaliza críticamente formas de cuidar, respetar y proteger la biodiversidad sustentablemente."
+        },
+        {
+          "contenido": "Valoración de la megadiversidad mexicana: megadiversidad en México, diversidad cultural, relaciones ser humano-naturaleza y representaciones distintas de las diferentes culturas o grupos sociales, sobre la biodiversidad y su manejo, acorde a sus contextos.",
+          "pda_6": "Investiga sobre las características geográficas y las regiones biogeográficas que hacen de México un país megadiverso y biocultural, relacionándolas con las zonas climáticas, los espacios económicos, la distribución de la población en México y los países con mayor biodiversidad.\n\nAnaliza y argumenta cómo la biodiversidad local influye en las tradiciones culturales de la comunidad (cultivos, alimentos, indumentaria, herbolaria, fiestas, ritos, entre otras).\n\nArgumenta por qué la megadiversidad de México es parte de su patrimonio biocultural, para comprender su estrecha vinculación con el desarrollo social, la salud y el bienestar de la población, y ejemplifica elementos del patrimonio biocultural de México reconocidos a nivel mundial."
+        },
+        {
+          "contenido": "Sustentabilidad de la biodiversidad y humanismo: rasgos de los estilos de vida y modelos de desarrollo dominantes y su impacto en la biodiversidad, implicaciones socioambientales de la preservación.",
+          "pda_6": "Valora las causas y los factores sociales que impactan en la problemática ambiental, en la salud de los ecosistemas, en los seres humanos y demás seres vivos, entre otros riesgos que amenazan la continuidad de la vida en la Tierra.\n\nAnaliza críticamente las implicaciones socioambientales de la mercantilización de la biodiversidad, y propone alternativas sustentables para favorecer la estabilidad y seguridad de la convivencia humana con la naturaleza."
+        },
+        {
+          "contenido": "Ética y biodiversidad: factores sociales que propician la convivencia armónica con el medio ambiente basada en el respeto, responsabilidad, justicia social y equidad con la naturaleza.",
+          "pda_6": "Valorar la importancia del respeto y la colaboración en el cuidado y aprovechamiento sustentable de la biodiversidad, considerándola como parte imprescindible para la vida humana, y cuya protección debe promover la justicia social, desde la equidad y la solidaridad.\n\nIndaga y evalúa situaciones que impactan la biodiversidad de México, considerando los valores, las interacciones y acciones personales, familiares, comunitarias y de otras sociedades.\n\nPropone y pone en práctica, de manera crítica, con juicio ético y de acuerdo con sus posibilidades, acciones de bienestar común para la regeneración y preservación de la biodiversidad en la vida cotidiana; reflexionando acerca de los derechos de la naturaleza.\n\nArgumenta sobre la responsabilidad de todos los sectores sociales, para llevar a cabo medidas necesarias y solidarias que protejan a la megadiversidad del país y del mundo, bajo un enfoque ético y comprometido con la sustentabilidad, para garantizar su regeneración, preservación, el bienestar común y el derecho humano a un ambiente sano de las presentes y futuras generaciones."
+        },
+        {
+          "contenido": "Derechos humanos: a un ambiente sano y acceso al agua potable.",
+          "pda_6": "Indaga, comprende y dialoga sobre la importancia del agua y su balance con otros elementos del ecosistema global, para garantizar la supervivencia de la biodiversidad, incluido el ser humano.\n\nComprende que la Constitución Política de los Estados Unidos Mexicanos, las leyes nacionales y los tratados internacionales suscritos por México, garantizan los derechos a la salud, a un medio ambiente sano, y el acceso a agua potable.\n\nDialoga y argumenta acerca de cómo ejerce sus derechos humanos a la salud, al agua potable y a un ambiente sano y adecuado para su desarrollo y bienestar, y se compromete a respetar la biodiversidad, actuar con reciprocidad, cuidándola y contribuyendo en su regeneración y preservación."
+        },
+        {
+          "contenido": "La responsabilidad compartida, el respeto y el consumo sustentable: acciones colectivas a favor de la protección, regeneración y preservación de la biodiversidad y el bienestar socioambiental.",
+          "pda_6": "Investiga acciones de consumo sustentable del agua y la biodiversidad, para contribuir a mitigar el impacto negativo de la sociedad en estos sistemas de la naturaleza."
+        },
+        {
+          "contenido": "Riesgos de desastre y crisis humanitarias, asociados a fenómenos naturales y generados por acciones humanas: sus causas y consecuencias, para contribuir, de manera solidaria, a minimizar sus efectos.",
+          "pda_6": "Investiga, en distintas fuentes, acerca de las crisis humanitarias actuales, causadas por desastres de tipo natural o antrópico, y que generan desplazamiento de grandes grupos de personas, considerando las razones por las que tuvieron que desplazarse de esa región, ¿a qué lugar llegaron a refugiarse?, ¿cuáles son las situaciones de peligro que enfrentan en su camino?, ¿por qué se les considera refugiados?; y a ¿quién le corresponde proporcionarles ayuda?\n\nDialoga acerca de cómo se sienten las personas al ser obligadas a abandonar su lugar de origen, dejando atrás su patrimonio y su forma de vida, ¿qué pasa con las familias?, ¿cómo viven niñas, niños y adolescentes?, y ¿cómo afecta esta situación a las mujeres y personas con discapacidad?\n\nIdentifica los mecanismos de prevención que se utilizan en México y otros países, tales como la alerta sísmica, la alerta temprana para ciclones, la alerta temprana para tsunamis, el monitoreo de volcanes, entre otros, que permiten mitigar el impacto económico y social derivado de dichas eventualidades.\n\nIndaga acerca de los organismos internacionales que proporcionan ayuda humanitaria, así como cuáles son sus funciones y qué tipo de ayuda proporciona.\n\nComprende que las crisis humanitarias precisan de la colaboración de otros países, aportando ayuda humanitaria.\n\nPropone acciones que pueden llevar a cabo las personas o comunidades, para minimizar los efectos de las crisis humanitarias en su entidad, país o en otra parte del mundo."
+        },
+        {
+          "contenido": "Construcción de la cultura de paz: análisis de conflictos vecinales y/o territoriales del pasado y del presente entre personas, grupos, comunidades y pueblos para identificar sus causas, cómo se desarrollaron y cómo se resolvieron, destacando el diálogo, la negociación y la tolerancia.",
+          "pda_6": "Analiza críticamente algunos ejemplos de conflictos territoriales en México en el pasado o el presente vinculados con la disposición, obtención, despojo de recursos, diferencias económicas, políticas, culturales, indefinición de límites territoriales, para valorar las relaciones de justicia, respeto, colaboración, reciprocidad y convivencia armónica, que deben existir entre las personas y países para promover la cultura de paz.\n\nIndaga en fuentes bibliográficas, hemerográficas o en narraciones orales, cómo se desarrolló el conflicto, así como los recursos que se usaron para abordarlo.\n\nRealiza propuestas para promover la cultura de paz en distintos ámbitos de convivencia."
+        },
+        {
+          "contenido": "La democracia como forma de gobierno en México y su construcción a través de la historia.",
+          "pda_6": "Analiza críticamente las transformaciones en la forma de gobierno en México durante el siglo XX: el fin del porfiriato, la Revolución Mexicana y la promulgación de la Constitución de 1917, que reafirma el sistema federal, la separación y equilibrio de Poderes; las posteriores reformas legales que garantizan la participación política equitativa e igualitaria, tales como la reforma constitucional de 1953 que reconoce el derecho al voto de las mujeres.\n\nIdentifica cómo se retomaron las demandas históricas y los conflictos en la construcción de la República representativa, democrática, laica, federal, pluricultural y plurilingüe, que hoy nos rige como país.\n\nIndaga y analiza críticamente algunas experiencias de organización de pueblos originarios, afromexicanos y migrantes, así como otros pueblos y colectivos que dan cuenta de la toma de decisiones conjuntas, para el ejercicio de la autoridad y la corresponsabilidad en la búsqueda del bienestar común."
+        },
+        {
+          "contenido": "Cultura democrática: principios éticos que subyacen en los acuerdos, normas y leyes democráticas, importancia de su cumplimiento y evaluación de su aplicación justa, equitativa e igualitaria en la vida cotidiana.",
+          "pda_6": "Evalúa la aplicación justa, equitativa e igualitaria de acuerdos, normas y leyes en situaciones cotidianas del ámbito local o nacional, comprende que esto favorece la cultura democrática.\n\nArgumenta en favor del cumplimiento de los principios de igualdad, respeto, inclusión, responsabilidad, libertad, justicia, legalidad, honestidad, interculturalidad, entre otros, y analiza, de forma crítica, los beneficios de llevarlos a cabo, en los ámbitos personal y colectivo, así como en la interrelación de la sociedad."
+        },
+        {
+          "contenido": "Desafíos para la construcción de sociedades inclusivas y equitativas: la violencia de género como un problema estructural, con un peso social, cultural e histórico, a fin de visibilizar sus causas y consecuencias, para erradicarlas, buscando la equidad como derecho.",
+          "pda_6": "Analiza críticamente las causas y consecuencias de la violencia de género en México y el mundo, como un problema estructural, social, cultural e histórico.\n\nIdentifica cómo se naturaliza la desigualdad de género, lo que contribuye a su reproducción.\n\nIdentifica algunas formas en las que está presente la desigualdad en las relaciones de pares, en la escuela y la comunidad; por ejemplo, en los juegos, en los deportes, en las TIC'S, entre otras, y propone cómo transformarlas en nuevas formas de relación, que favorezcan la equidad, respeten y aprecien la diversidad."
+        },
+        {
+          "contenido": "Contribuciones al bienestar colectivo: servicios públicos e infraestructura para satisfacer las necesidades de salud, educación, esparcimiento, comunicación, seguridad y justicia de las personas que habitan la comunidad y el país, así como la rendición de cuentas y el uso transparente de los recursos como parte de una sociedad democrática.",
+          "pda_6": "Analiza los servicios públicos y la infraestructura que benefician a las personas de su comunidad y del país, e identifica cómo es posible contribuir en su mantenimiento y cuidado, con un manejo transparente de los recursos, desde los ámbitos de la sociedad, como el pago de impuestos, trabajo comunitario, tequio, entre otros.\n\nComprende qué es la rendición de cuentas y la transparencia en el manejo de los recursos públicos, por qué es importante que los ciudadanos la demanden a sus gobernantes y cómo pueden hacerlo."
+        },
+        {
+          "contenido": "El derecho a la protección de la integridad física y mental, ante cualquier forma de maltrato, abuso o explotación de tipo sexual o laboral, así como, la identificación de personas e instituciones que pueden apoyar para el ejercicio de ese derecho.",
+          "pda_6": "Ejerce el derecho a la protección de la dignidad, integridad y los datos personales contra cualquier forma de maltrato, abuso o explotación de tipo sexual o laboral, de manera presencial o a través de medios electrónicos, en los distintos ámbitos de convivencia (familia, escuela y comunidad).\n\nIdentifica Instituciones que brindan protección a niñas, niños y adolescentes ante situaciones de maltrato, abuso o explotación de tipo sexual y laboral y propone acciones de defensa y protección a los derechos de todas las personas."
+        },
+        {
+          "contenido": "La lucha por el reconocimiento de los derechos humanos: la protección de la dignidad de todas las personas y grupos sociales para vivir con gozo y armonía, sin importar las diferencias.",
+          "pda_6": "Comprende que los logros de las luchas históricas por el reconocimiento a los derechos humanos se han plasmado en la constitución y los tratados internacionales.\n\nReconoce que los derechos humanos son universales, indivisibles, interdependientes, progresivos, inalienables, irrenunciables.\n\nDialoga acerca de que las leyes y los tratados internacionales son instrumentos que podemos utilizar para la demanda y ejercicio de los derechos humanos.\n\nInvestiga sobre grupos y organizaciones, que en la actualidad luchan por el reconocimiento de sus derechos y por la justicia social.\n\nDialoga acerca de por qué los derechos a la memoria colectiva, la verdad y la justicia son importantes contra la impunidad y la no repetición de actos que violentan la dignidad y los derechos humanos."
+        },
+        {
+          "contenido": "Cumplimiento de los derechos humanos: estudio de casos de actos de discriminación, racismo o violencias que suceden actualmente en México y el mundo.",
+          "pda_6": "Analiza críticamente un caso de racismo, discriminación o violencias en el continente americano o en otros países del mundo, e identifica las causas y las consecuencias culturales, económicas, políticas y sociales que derivan del caso analizado, y propone acciones solidarias que favorezcan el respeto y el cumplimiento de los derechos humanos."
+        },
+        {
+          "contenido": "Valores y prácticas de los pueblos originarios y afromexicanos: el respeto, la reciprocidad y el beneficio mutuo como valores fundamentales de la relación con la naturaleza y con otras personas.",
+          "pda_6": "Indaga acerca de experiencias de convivencia en algunos pueblos originarios, afromexicanos o grupos urbanos de México y del Continente Americano, que se sustentan en respeto, la reciprocidad y el beneficio mutuo, en la relación armónica con la naturaleza, y con otros seres humanos.\n\nReconoce que su convivencia se sustenta en el trabajo colectivo, la reciprocidad, el aprovechamiento sustentable de la naturaleza en el territorio, la búsqueda del beneficio mutuo, y valora los beneficios que ello implica, para practicar el buen vivir."
+        },
+        {
+          "contenido": "Pueblos y culturas de América y el mundo: el respeto a las costumbres, tradiciones y formas de vivir de diferentes culturas.",
+          "pda_6": "Indaga algunos momentos en los que las culturas del mundo han interactuado, producto de las migraciones, de la búsqueda e intercambio de productos y materiales, de las relaciones comerciales, así como de la exploración y la expansión territorial.\n\nReconoce que las culturas actuales en diferentes partes del mundo se han formado a través del tiempo y tienen distintos orígenes.\n\nValora semejanzas y diferencias como parte de la diversidad humana y su riqueza cultural.\n\nLocaliza y describe las características (zonas climáticas, relieve y aguas continentales) de algunos pueblos y culturas de los continentes: África, América, Antártida, Asia, Europa y Oceanía, así como sus relaciones y formas de vida.\n\nReconoce algunos efectos globales en la vida cotidiana de pueblos, comunidades y países que se encuentran distantes del lugar donde se originan las situaciones de afectación socioambiental, y sus derivaciones económicas, políticas, sociales, culturales, ecológicas, entre otras.\n\nIdentifica puntos y líneas imaginarias del planeta Tierra, y localiza lugares en México y el mundo, utilizando las coordenadas geográficas."
+        },
+        {
+          "contenido": "Movimientos sociales en el México de los siglos XIX y XX: la Independencia y la Revolución Mexicana.",
+          "pda_6": "Indaga en fuentes bibliográficas, hemerográficas y digitales, así como en fotografías y objetos, las principales características sociales, económicas, políticas y culturales del Porfiriato.\n\nIndaga acerca de las causas que dieron origen al movimiento revolucionario de 1910, como las injusticias, entre las que se encuentran: el despojo de las tierras comunales de campesinos y pueblos originarios, la explotación laboral por las compañías extranjeras, casos como las huelgas de los trabajadores de Cananea, Sonora (1906) y de Río Blanco, Veracruz (1907), y la apropiación y control de diversas extensiones de tierras, bosques y aguas en pocas manos.\n\nIndaga sobre procesos y luchas por la justicia, que ocurren actualmente en diversas partes del país.\n\nInvestiga sobre la participación de distintos grupos en la búsqueda por la justicia social, el reconocimiento y la garantía de los derechos sociales, además de cómo estos ideales se plasmaron en la Constitución Política de los Estados Unidos Mexicanos de 1917.\n\nInvestiga en fuentes bibliográficas, hemerográficas e iconográficas, sobre los debates del constituyente de 1917, para lograr el reconocimiento y la garantía de los derechos sociales.\n\nAnaliza los artículos 3o., 27 y 123 de la Constitución Política de los Estados Unidos Mexicanos referentes a la educación, la propiedad de las tierras y el trabajo, indaga los debates que se dieron en el constituyente para su reconocimiento y garantía.\n\nInvestiga el impacto que tuvo en la entidad el movimiento revolucionario.\n\nAnaliza la participación en el movimiento revolucionario de personajes como Francisco I. Madero, Emiliano Zapata, Francisco Villa, Venustiano Carranza, entre otros, destacando sus ideales, así como su origen social y cultural.\n\nReconoce la participación de las mujeres en la lucha revolucionaria, tales como María de la Luz Espinoza Barrera, Carmen Vélez \"La Generala\", María Quinteras de Meras, Petra Herrera, las \"adelitas\", entre otras.\n\nDestaca y compara la participación actual de mujeres mexicanas entre las que se identifican indígenas y afromexicanas, en diversos ámbitos de la vida política, social y cultural del país.\n\nRepresenta en mapas, los lugares estratégicos y emblemáticos de la lucha por la Revolución Mexicana, y las rutas seguidas por los personajes que encabezaron este movimiento."
+        },
+        {
+          "contenido": "México independiente: la vida cotidiana, las intervenciones extranjeras durante el siglo XIX, causas y consecuencias de conflictos territoriales, la defensa de la soberanía nacional y la conformación del estado laico. (Quinto grado)",
+          "pda_6": "Este contenido corresponde únicamente a Quinto grado; el documento no presenta Procesos de Desarrollo de Aprendizaje de Sexto grado para este contenido."
+        },
+        {
+          "contenido": "México posrevolucionario (1920-1940): vida cotidiana, los procesos que implicaron la reconfiguración del país en los ámbitos social, económico, político, religioso y cultural, así como el impacto en el ambiente.",
+          "pda_6": "Indaga en fuentes bibliográficas, hemerográficas y digitales, así como en fotografías y objetos, las características sociales, económicas, políticas, religiosas y culturales en el México posrevolucionario (1920-1940).\n\nAnaliza el proceso que implicó la reconfiguración del país, tras la lucha revolucionaria, para la cimentación de un régimen político democrático, acorde con lo plasmado en la Constitución de 1917.\n\nIdentifica las tensiones y conflictos entre caudillos revolucionarios y grupos políticos con diferentes intereses e ideologías, del periodo posrevolucionario.\n\nAnaliza el proceso denominado Maximato (1928-1934), en la búsqueda de la estabilidad política que requería la República.\n\nIndaga las causas, desarrollo y consecuencias de la rebelión cristera, e identifica cómo se dio la negociación del conflicto que reafirmó la libertad de creencias y el estado laico.\n\nRepresenta en mapas, los lugares y zonas de confrontación de la lucha cristera.\n\nIdentifica algunas acciones que se impulsaron durante el Cardenismo, como la expropiación petrolera y el reparto agrario a campesinos y comunidades indígenas.\n\nDialoga acerca de cómo los procesos históricos han cambiado la vida de las personas y sus comunidades."
+        },
+        {
+          "contenido": "Migración y derechos humanos: migración interna y externa, causas y consecuencias sociales, económicas, culturales, políticas y ambientales.",
+          "pda_6": "Reconoce los flujos migratorios en los que hay mayor cantidad de emigrantes en el mundo, identificando países de origen y de destino.\n\nExplica causas y consecuencias sociales, culturales, económicas, políticas y ambientales de la migración, en casos específicos en el mundo, mediante el análisis de noticias, documentales y algunos testimonios de migrantes internacionales.\n\nUbica en mapas, las rutas que siguen los migrantes, desde su lugar de origen, hasta su destino.\n\nReflexiona acerca de los impactos de las migraciones en la identidad y pertenencia de las personas, así como, los prejuicios que generan aspectos como la discriminación.\n\nDialoga acerca de cómo cada país establece sus reglas para reconocer y otorgar la ciudadanía, así como las acciones que se podrían implementar para la protección de los derechos de las personas migrantes.\n\nDialoga y elabora juicios éticos acerca de los derechos de las personas migrantes."
+        }
+      ]
+    },
+    {
+      "campo_formativo": "De lo Humano y lo Comunitario",
+      "contenidos": [
+        {
+          "contenido": "Las familias como espacio para el desarrollo del sentido de pertenencia y autonomía, para una sana convivencia.",
+          "pda_6": "Diseña e interactúa en distintos escenarios de convivencia, para fortalecer su autonomía y su participación en la familia.\n\nPromueve los valores familiares, para la resolución de conflictos y el desarrollo personal."
+        },
+        {
+          "contenido": "Alternativas ante conflictos y problemas de la vida en la comunidad.",
+          "pda_6": "Reflexiona y comparte los problemas y conflictos que se presentan en su comunidad, para proponer alternativas de solución viables.\n\nValora propuestas de alternativas que plantea para valorar su viabilidad en su comunidad."
+        },
+        {
+          "contenido": "La escuela como ventana hacia el futuro.",
+          "pda_6": "Indaga sobre experiencias de estudio y comunidades de práctica, para ampliar sus horizontes de formación.\n\nSe informa acerca de la oferta educativa en su región, para identificar sus posibilidades de ingreso al nivel de educación media."
+        },
+        {
+          "contenido": "La comunidad, como espacio para el aprendizaje y el bienestar común.",
+          "pda_6": "Profundiza acerca de ideas, conocimientos y prácticas culturales, para proponer alternativas orientadas a promover, preservar y difundir para el bien común.\n\nDiseña, bajo los principios de respeto, y tolerancia, estrategias de organización ante diferentes situaciones, para la prevención de conflictos, la satisfacción de necesidades comunes y el desarrollo sustentable de su comunidad."
+        },
+        {
+          "contenido": "Formas de ser, pensar, actuar y relacionarse.",
+          "pda_6": "Valora sus experiencias acerca de las formas de ser, pensar, actuar y relacionarse en determinadas situaciones, para favorecer su comprensión, el ejercicio de la empatía y el logro de metas."
+        },
+        {
+          "contenido": "Construcción del proyecto de vida.",
+          "pda_6": "Valora sus logros y retos afrontados en la historia personal para definir aspiraciones y acciones a realizar ante nuevas etapas de la vida.\n\nValora logros y cambios en gustos, necesidades, intereses y habilidades actuales, para reestructurar metas que favorezcan el desarrollo personal y social."
+        },
+        {
+          "contenido": "Educación Integral en Sexualidad.",
+          "pda_6": "Reflexiona acerca de la importancia de expresar su consentimiento o rechazo ante situaciones que le generan placeres y displaceres para valorar las implicaciones en su bienestar."
+        },
+        {
+          "contenido": "Equidad de género.",
+          "pda_6": "Analiza situaciones de discriminación asociadas con la identidad o género en la escuela, la comunidad y otros ámbitos, para reconocer formas de violencia y participar en acciones de prevención."
+        },
+        {
+          "contenido": "Capacidades, habilidades y destrezas motrices.",
+          "pda_6": "Aplica sus capacidades, habilidades y destrezas motrices al organizar y participar en situaciones de juego e iniciación deportiva, para favorecer su disponibilidad corporal."
+        },
+        {
+          "contenido": "Potencialidades cognitivas, expresivas, motrices, creativas y de relación.",
+          "pda_6": "Diseña propuestas de actividades lúdicas y expresivas a partir de sus intereses, capacidades y habilidades, para fortalecer su imagen corporal."
+        },
+        {
+          "contenido": "Estilos de vida activos y saludables.",
+          "pda_6": "Evalúa los factores que limitan la práctica constante de actividades físicas, para implementar opciones que permitan superarlos a lo largo de la vida."
+        },
+        {
+          "contenido": "Pensamiento lúdico, estratégico y creativo.",
+          "pda_6": "Emplea el pensamiento estratégico y divergente ante situaciones de juego o cotidianas, para valorar la actuación, individual y colectiva, y adaptarla de acuerdo con el contexto."
+        },
+        {
+          "contenido": "Interacción motriz.",
+          "pda_6": "Organiza e implementa situaciones de juego e iniciación deportiva, para favorecer la convivencia en la escuela y la comunidad."
+        },
+        {
+          "contenido": "Acciones individuales que repercuten en la conservación y mejora de la salud.",
+          "pda_6": "Promueve alternativas de hábitos de higiene personal y limpieza de los espacios en la comunidad, para impulsar la toma de decisiones informadas que contribuyan a asumir prácticas saludables y sostenibles.\n\nComprende los riesgos del consumo de alimentos procesados y ultraprocesados en la salud y el medio ambiente, para favorecer la adopción de prácticas alimentarias saludables y sostenibles.\n\nDiseña alternativas que contribuyen a afrontar cambios o situaciones de riesgo relacionadas con accidentes, adicciones y formas de violencia, para valorar su pertinencia y determinar su viabilidad."
+        },
+        {
+          "contenido": "Sentido de comunidad y satisfacción de necesidades humanas.",
+          "pda_6": "Diseña alternativas orientadas a promover, preservar y, en caso necesario, replantear ideas, conocimientos y prácticas culturales, para impulsar una mayor difusión y participación.\n\nDiseña de manera consensuada, estrategias de organización ante diferentes situaciones que impliquen cambios que pueden generar resistencia, para la prevención de problemas y satisfacción de necesidades, así como el aprovechamiento responsable y sostenible de recursos."
+        },
+        {
+          "contenido": "Toma de decisiones y creatividad, ante problemas de la vida.",
+          "pda_6": "Describe los problemas de vida que ha enfrentado para reflexionar sobre su resolución con base en el juicio crítico.\n\nValora su capacidad creadora para la solución de problemas en la vida y en su comunidad con base en el juicio crítico.\n\nEvalúa la asertividad para expresar sus emociones sin perjudicar a otra persona.\n\nDramatiza una propuesta de juicio crítico en la de toma de decisiones para discernir la solución de los problemas de la vida."
+        },
+        {
+          "contenido": "Los afectos y su influencia en el bienestar.",
+          "pda_6": "Reflexiona sobre hábitos que afectan positiva o negativamente en el estado de ánimo para lograr el bienestar personal y social.\n\nCrea estrategias que ayudan a la expresión adecuada de las emociones, y que favorecen la interacción y el bienestar personal y social."
+        }
+      ]
+    }
+  ]
+}

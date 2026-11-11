@@ -119,7 +119,7 @@ def generar_pptx_diapositivas(recurso_id: str, datos: dict) -> str:
     _fondo(slide, color)
     _circulos_blancos(slide, cantidad=8, semilla=1)
     primera = datos.get("diapositivas", [{}])[0] if datos.get("diapositivas") else {}
-    emoji_portada = primera.get("emoji", "⭐")
+    emoji_portada = primera.get("emoji", "")
     _texto(slide, emoji_portada, Inches(0), Inches(1.2), SLIDE_W, Inches(1.6), 88, align=PP_ALIGN.CENTER)
     _texto(slide, datos.get("titulo", "Mi presentación"), Inches(1), Inches(3.1), Inches(11.3), Inches(2.2),
            48, bold=True, align=PP_ALIGN.CENTER)

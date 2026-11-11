@@ -12,6 +12,7 @@ muchísimo el ruido cuando ya sabes en qué contexto está el docente.
 import json
 import os
 import re
+import threading
 
 import chromadb
 from rank_bm25 import BM25Okapi
@@ -23,6 +24,11 @@ _client = None
 _collection = None
 _bm25 = None
 _bm25_docs = None  # lista de dicts alineada con el índice del BM25
+_bm25_idx = None   # id del chunk -> posicion en el BM25 (se arma una vez)
+
+# Varias peticiones pueden llegar a la vez justo despues de arrancar; sin el
+# candado cada una cargaria su propia copia del indice (memoria x N).
+_carga = threading.Lock()
 
 
 def _tokenize(text):
@@ -32,16 +38,26 @@ def _tokenize(text):
 def _load_collection():
     global _client, _collection
     if _collection is None:
-        _client = chromadb.PersistentClient(path=config.CHROMA_DIR)
-        _collection = _client.get_collection("sep_libros")
+        with _carga:
+            if _collection is None:
+                _client = chromadb.PersistentClient(path=config.CHROMA_DIR)
+                _collection = _client.get_collection("sep_libros")
     return _collection
 
 
 def _load_bm25():
     """Construye el índice BM25 en memoria a partir de chunks.jsonl."""
-    global _bm25, _bm25_docs
+    global _bm25, _bm25_docs, _bm25_idx
     if _bm25 is not None:
         return _bm25, _bm25_docs
+    with _carga:
+        if _bm25 is None:
+            _construir_bm25()
+    return _bm25, _bm25_docs
+
+
+def _construir_bm25():
+    global _bm25, _bm25_docs, _bm25_idx
 
     if not os.path.exists(config.CHUNKS_PATH):
         raise FileNotFoundError(
@@ -54,9 +70,9 @@ def _load_bm25():
             docs.append(json.loads(line))
 
     tokenized = [_tokenize(d["text"]) for d in docs]
-    _bm25 = BM25Okapi(tokenized)
+    _bm25_idx = {d["id"]: i for i, d in enumerate(docs)}
     _bm25_docs = docs
-    return _bm25, _bm25_docs
+    _bm25 = BM25Okapi(tokenized)
 
 
 def _normalize(scores):
@@ -104,14 +120,15 @@ def hybrid_search(query, grado=None, materia=None,
     # Chroma regresa distancia coseno (menor es mejor) -> convertir a similitud
     vector_scores = [1 - d for d in candidate_distances]
 
-    # --- score BM25 para esos mismos candidatos ---
-    id_to_bm25_doc = {d["id"]: d for d in bm25_docs}
+    # --- score BM25 solo para esos mismos candidatos ---
+    # Antes se calculaba el score de TODOS los chunks y se armaban dos dicts
+    # de tamano N en cada busqueda: O(N * q). Ahora solo se puntuan los k
+    # candidatos que trajo la busqueda semantica: O(k * q), con k = 15.
     tokenized_query = _tokenize(query)
-    bm25_scores_full = bm25.get_scores(tokenized_query)
-    id_to_bm25_score = {
-        d["id"]: bm25_scores_full[i] for i, d in enumerate(bm25_docs)
-    }
-    bm25_scores = [id_to_bm25_score.get(cid, 0.0) for cid in candidate_ids]
+    posiciones = [_bm25_idx.get(cid) for cid in candidate_ids]
+    validas = [p for p in posiciones if p is not None]
+    puntajes = dict(zip(validas, bm25.get_batch_scores(tokenized_query, validas))) if validas else {}
+    bm25_scores = [float(puntajes.get(p, 0.0)) if p is not None else 0.0 for p in posiciones]
 
     # --- combinar scores normalizados ---
     norm_vector = _normalize(vector_scores)

@@ -73,30 +73,37 @@ def enviar_mensaje(
     validar_adjuntos_propios([a.url for a in payload.adjuntos], user, db)
 
     mensaje_usuario = ChatMensaje(conversacion_id=conversacion.id, role="user", content=payload.content)
-    
     mensaje_usuario.adjuntos = [a.model_dump() for a in payload.adjuntos]
     db.add(mensaje_usuario)
 
+    titulo_anterior = conversacion.titulo
     if conversacion.titulo == "Nueva conversación":
         conversacion.titulo = payload.content[:60]
 
     db.commit()
     db.refresh(mensaje_usuario)
 
-    if payload.use_rag:
-        respuesta_texto, fuentes = generar_respuesta_general(
-              historial=conversacion.mensajes,
-              nuevo_mensaje=payload.content,
-              adjuntos_nuevos=mensaje_usuario.adjuntos,
-        )
-
-    else:
-        respuesta_texto = generar_respuesta_sin_rag(
-             historial=conversacion.mensajes,
-             nuevo_mensaje=payload.content,
-             adjuntos_nuevos=mensaje_usuario.adjuntos,
-        )
-        fuentes = []
+    try:
+        if payload.use_rag:
+            respuesta_texto, fuentes = generar_respuesta_general(
+                historial=conversacion.mensajes,
+                nuevo_mensaje=payload.content,
+                adjuntos_nuevos=mensaje_usuario.adjuntos,
+            )
+        else:
+            respuesta_texto = generar_respuesta_sin_rag(
+                historial=conversacion.mensajes,
+                nuevo_mensaje=payload.content,
+                adjuntos_nuevos=mensaje_usuario.adjuntos,
+            )
+            fuentes = []
+    except HTTPException:
+        # El LLM no respondio: se deshace el mensaje del docente para que al
+        # reintentar no quede duplicado ni un mensaje sin respuesta.
+        db.delete(mensaje_usuario)
+        conversacion.titulo = titulo_anterior
+        db.commit()
+        raise
 
     mensaje_asistente = ChatMensaje(
         conversacion_id=conversacion.id,

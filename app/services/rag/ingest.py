@@ -358,7 +358,7 @@ def main():
 
     missing_meta = [f for f in pdf_files if f not in catalog]
     if missing_meta:
-        print("⚠️  Estos PDFs no tienen entrada en catalog.json y se van a omitir.")
+        print("Aviso: Estos PDFs no tienen entrada en catalog.json y se van a omitir.")
         print("   Corre primero: python generate_catalog.py")
         for f in missing_meta:
             print(f"   - {f}")
@@ -384,10 +384,10 @@ def main():
         for record in all_records:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
-    print(f"\n✅ Listo. {len(all_records)} chunks guardados en {config.CHUNKS_PATH}")
+    print(f"\nListo. {len(all_records)} chunks guardados en {config.CHUNKS_PATH}")
 
     if section_titles_seen == {"Contenido general"}:
-        print("\n⚠️  No se detectó NINGÚN encabezado de sección en tus PDFs "
+        print("\nAviso: No se detectó NINGÚN encabezado de sección en tus PDFs "
               "(todo quedó como 'Contenido general').")
         print("   Esto no rompe nada -- las páginas de cada chunk siguen siendo "
               "precisas -- pero si quieres títulos de sección más útiles en las "

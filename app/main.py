@@ -1,16 +1,25 @@
+import os
+
+# Silencia avisos ruidosos de librerias del RAG (no afectan el resultado):
+# telemetria de ChromaDB y el aviso de paralelismo de los tokenizers.
+os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sqlalchemy import text
+from sqlalchemy import inspect, text
 
 from app.core.config import settings
 from app.core.llm_quota import llm_user_quota
 from app.core.rate_limit import client_ip, limiter
 from app.db.session import Base, engine
-from app.models import archivo, comunidad, conversacion, planeacion, retroalimentacion, user  # noqa: F401
+from app.models import archivo, comunidad, conversacion, documento, planeacion, retroalimentacion, user  # noqa: F401
 from app.routers import (
     archivos,
     auth,
+    biblioteca,
+    catalogo,
     comunidad as comunidad_router,
     conversaciones,
     planeaciones,
@@ -33,6 +42,29 @@ _INDICES = (
 with engine.begin() as _conn:
     for _sql in _INDICES:
         _conn.execute(text(_sql))
+
+# Columnas agregadas despues de que la tabla ya existia en produccion.
+# create_all no las agrega. En Postgres "ADD COLUMN IF NOT EXISTS" es
+# idempotente aunque arranquen varios workers a la vez; SQLite no lo
+# soporta, asi que ahi se revisan las columnas antes.
+_COLUMNAS_NUEVAS = {
+    "planeaciones": (
+        ("metodologia", "VARCHAR"),
+        ("contexto_json", "TEXT"),
+        ("documento_json", "TEXT"),
+    ),
+}
+_existentes = {t: {c["name"] for c in inspect(engine).get_columns(t)} for t in _COLUMNAS_NUEVAS}
+for _tabla, _columnas in _COLUMNAS_NUEVAS.items():
+    for _nombre, _tipo in _columnas:
+        if engine.dialect.name == "postgresql":
+            _sql = f"ALTER TABLE {_tabla} ADD COLUMN IF NOT EXISTS {_nombre} {_tipo}"
+        elif _nombre not in _existentes[_tabla]:
+            _sql = f"ALTER TABLE {_tabla} ADD COLUMN {_nombre} {_tipo}"
+        else:
+            continue
+        with engine.begin() as _conn:
+            _conn.execute(text(_sql))
 
 app = FastAPI(title="Cuali API", version="0.1.0")
 
@@ -112,6 +144,9 @@ app.include_router(archivos.router_legacy)
 app.include_router(retroalimentacion_router.router)
 app.include_router(recursos.router, dependencies=[Depends(llm_user_quota)])
 app.include_router(comunidad_router.router)
+app.include_router(catalogo.router)
+app.include_router(biblioteca.router_libros)
+app.include_router(biblioteca.router_documentos)
 
 
 @app.get("/")

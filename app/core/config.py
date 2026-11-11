@@ -70,6 +70,21 @@ class Settings(BaseSettings):
     llm_max_concurrent: int = 2
     llm_queue_timeout_seconds: int = 30
 
+    # --- Comportamiento de cada llamada al LLM (llm_client.py) ---
+    # gpt-oss "razona" antes de responder y ese razonamiento gasta los mismos
+    # tokens que la respuesta. Con "low" razona menos: responde mas rapido y
+    # no se queda sin tokens en tareas largas. Vacio = no se envia el parametro.
+    llm_reasoning_effort: str = "low"
+    # Tiempo maximo de espera de una respuesta del LLM.
+    llm_timeout_seconds: int = 180
+    # Tope de tokens al reintentar una respuesta que se corto.
+    llm_max_tokens_reintento: int = 8000
+    # Salida JSON con esquema (response_format json_schema). Apagada por
+    # defecto: con gpt-oss en LM Studio el decodificado restringido forzaba
+    # a llenar el numero exacto de elementos y salian textos de relleno
+    # ("..", "..."). El JSON se valida en codigo de todas formas.
+    llm_json_schema: bool = False
+
     # --- Cuota de generaciones LLM por usuario (llm_quota.py) ---
     llm_user_max_per_hour: int = 40
 
