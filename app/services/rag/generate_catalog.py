@@ -87,11 +87,11 @@ def main():
     with open(config.CATALOG_PATH, "w", encoding="utf-8") as f:
         json.dump(catalog, f, ensure_ascii=False, indent=2)
 
-    print(f"✅ catalog.json generado con {len(catalog)} libros en {config.CATALOG_PATH}")
+    print(f"Listo: catalog.json generado con {len(catalog)} libros en {config.CATALOG_PATH}")
     print("   Ábrelo y revisa que los nombres de 'libro'/'materia' hayan quedado limpios.")
 
     if unresolved:
-        print(f"\n⚠️  No pude inferir el grado de {len(unresolved)} archivo(s). "
+        print(f"\nAviso: No pude inferir el grado de {len(unresolved)} archivo(s). "
               f"Agrégalos a mano en catalog.json:")
         for u in unresolved:
             print(f"   - {u}")

@@ -21,6 +21,14 @@ class Planeacion(Base):
     sesiones = Column(Integer, nullable=False)
     tema = Column(Text, nullable=False)
 
+    # Planeacion NEM estructurada. metodologia es un id de
+    # app.services.planeacion_nem.metodologias; contexto_json guarda lo que
+    # la docente conto de su grupo y documento_json el documento generado
+    # (se edita y se vuelve a exportar a Word sin llamar al modelo).
+    metodologia = Column(String, nullable=True)
+    contexto_json = Column(Text, nullable=True)
+    documento_json = Column(Text, nullable=True)
+
     status = Column(String, default="borrador", nullable=False)
     pdf_path = Column(String, nullable=True)  # legacy, ya no se usa para generar
     docx_path = Column(String, nullable=True)

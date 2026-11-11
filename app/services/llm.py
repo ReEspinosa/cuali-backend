@@ -7,8 +7,8 @@ delegan la llamada al modelo al cliente ya probado en
 app.services.llm_client (el que sabe manejar el HTTP Basic Auth del
 servidor de la UNAM) -- no se crea ningún cliente nuevo aquí.
 
-extraer_planeacion_estructurada() no requiere RAG (no busca contenido nuevo
-de la SEP, solo estructura la conversación ya ocurrida).
+La planeacion NEM completa se genera en app.services.planeacion_nem
+(datos oficiales por codigo, fuentes del RAG y validacion).
 
 El resto de las funciones (diapositivas, cuestionarios, mapas mentales,
 juegos, laboratorio, etc.) tampoco usan el RAG -- generan contenido a partir
@@ -19,7 +19,9 @@ import logging
 import re
 
 from app.models.planeacion import Mensaje, Planeacion
-from app.services.llm_client import chat_completion, chat_completion_json
+from fastapi import HTTPException
+
+from app.services.llm_client import chat_completion, chat_completion_json, llm_no_disponible
 
 logger = logging.getLogger(__name__)
 
@@ -124,9 +126,9 @@ Estás ayudando a planear una clase con estos datos:
 - Número de sesiones: {planeacion.sesiones}
 - Tema/objetivo que quiere abordar el maestro: {planeacion.tema}
 
-Tu papel en esta conversación es GUIAR al maestro con preguntas para reunir
-la información necesaria para su planeación, no darle la planeación completa
-en el chat. La planeación final se genera aparte con un botón. Cuando
+Tu papel en esta conversación es ayudar a la docente a ajustar su planeación:
+resolver dudas y recoger cambios. La planeación final se genera aparte con
+un botón. Cuando
 comentes o sugieras algo, aunque sea brevemente, apóyate en los fragmentos
 de los libros de la SEP que se te den como contexto, no en conocimiento
 general.
@@ -136,29 +138,15 @@ No uses emojis."""
 
 def _directiva_de_fase(num_mensajes_maestro: int) -> str:
     """
-    Controla el flujo guiado: bienvenida + 2 preguntas, luego rondas de
-    retroalimentación + 2 preguntas, y al llegar a suficiente información,
-    invitación a presionar el botón "Generar planeación".
+    El chat de una planeacion ya no es obligatorio: el documento se genera
+    desde el formulario. Aqui la docente pide ajustes; lo que diga se manda
+    como indicaciones la proxima vez que presione "Generar planeación".
     """
-    if num_mensajes_maestro <= 1:
-        return """Instrucción para este turno: este es el PRIMER mensaje del maestro
-(el resumen de su formulario). Dale una bienvenida breve y entusiasta,
-reconoce el tema que eligió, y hazle EXACTAMENTE 2 preguntas concretas que
-te ayuden a personalizar su planeación (por ejemplo: qué materiales tiene
-disponibles, cómo es su grupo, qué actividades le han funcionado antes, si
-quiere incluir alguna dinámica específica). Nada más: no des actividades
-todavía, no hagas más de 2 preguntas."""
-    if num_mensajes_maestro <= 4:
-        return f"""Instrucción para este turno: el maestro va {num_mensajes_maestro - 1} de 4
-respuestas. Comenta brevemente lo que te acaba de responder (1 o 2 oraciones,
-mostrando que lo tomaste en cuenta) y hazle EXACTAMENTE 2 preguntas nuevas
-que aún no hayas hecho, para seguir afinando la planeación. No repitas
-preguntas anteriores. No des la planeación todavía."""
-    return """Instrucción para este turno: el maestro ya respondió suficientes
-preguntas. NO hagas más preguntas. Agradécele, resume en 2 o 3 oraciones lo
-más importante que te contó, y dile explícitamente algo como: "Ya tengo la
-información necesaria para armar tu planeación. Te invito a presionar el
-botón 'Generar planeación' que está arriba para descargarla." """
+    return """Instrucción para este turno: responde breve (máximo dos párrafos)
+y concreto a lo que pide la docente. Si propone un cambio a la planeación,
+confírmale en una oración cómo quedará y recuérdale que se aplicará al
+presionar "Generar planeación" de nuevo. Haz como máximo una pregunta, solo
+si de verdad necesitas el dato. No escribas la planeación completa en el chat."""
 
 
 def _to_history_messages(historial: list[Mensaje]) -> list[dict]:
@@ -213,6 +201,10 @@ def _generar_respuesta_con_rag(
             retrieval_query=retrieval_query,
             allow_markdown=allow_markdown,
         )
+    except HTTPException:
+        # El LLM no respondio: se propaga el 503 para que el router no guarde
+        # nada y el docente pueda reintentar.
+        raise
     except Exception:
         logger.exception("Falla al llamar al RAG para la pregunta: %r", question)
         raise RagNoDisponible("Ocurrió un error al consultar el RAG.")
@@ -244,57 +236,11 @@ def generar_respuesta_chat(
         )
         return respuesta
     except RagNoDisponible:
-        # Fallback EXPLÍCITO -- nunca simula una respuesta real. El docente
-        # necesita saber que esto no vino de los libros de la SEP.
-        return (
-            "No pude conectarme con la base de libros de la SEP en este momento, "
-            "así que no puedo darte una respuesta fundamentada ahora mismo. "
-            "Intenta de nuevo en unos segundos; si el problema persiste, avísale "
-            "al equipo técnico."
+        # Antes se guardaba un texto de error como si fuera respuesta de Cuali
+        # (y el docente podia evaluarlo). Ahora es un 503: no se guarda nada.
+        raise llm_no_disponible(
+            "No pude consultar los libros de la SEP en este momento. Intenta de nuevo en unos segundos."
         )
-
-
-_EXTRACCION_SYSTEM_PROMPT = """Eres un asistente que convierte una conversación entre
-un maestro de primaria en México y "Cuali" (un asistente pedagógico) en un
-documento de planeación didáctica estructurado, alineado a la Nueva Escuela
-Mexicana (NEM).
-
-Reglas estrictas:
-- Responde ÚNICAMENTE con un objeto JSON válido. Sin texto antes ni después.
-  Sin backticks, sin markdown, sin explicaciones.
-- No inventes ni reescribas el PDA que se te da como dato fijo; úsalo como
-  ancla para redactar "intencion_didactica", "proposito" y las actividades.
-- Redacta "intencion_didactica", "proposito" y las "actividades" de cada
-  sesión en primera persona, como si fueras la maestra o el maestro dirigiendo
-  la clase (ejemplo: "Les pediré que...", "Leeremos...", "Organizaré equipos
-  para...").
-- El número de objetos dentro de "dias" debe ser EXACTAMENTE igual al número
-  de sesiones indicado.
-- Al menos una sesión debe incluir una actividad lúdica explícita.
-- Usa la información real que el maestro haya dado en la conversación
-  (materiales que mencionó, ideas que propuso, fechas o días de la semana si
-  los dijo). Si el maestro no dio suficiente detalle para alguna sesión,
-  redacta algo razonable y coherente con el PDA, no lo dejes vacío.
-- No uses emojis.
-
-Responde con este JSON exacto (mismas llaves, mismo orden no importa):
-{
-  "metodologia": "string, por ejemplo 'Aprendizaje Basado en Proyectos' o 'Aprendizaje Servicio', la que mejor calce con la conversación",
-  "ejes_articuladores": ["string", "..."],
-  "titulo_proyecto": "string",
-  "intencion_didactica": "string",
-  "proposito": "string",
-  "dias": [
-    {
-      "etapa": "string, ej. 'Punto de partida', 'Planificación', 'Acción', 'Comunicamos', 'Reflexionamos'",
-      "sesion": "string, ej. 'Sesión 1' o el día de la semana si el maestro lo mencionó",
-      "actividades": "string",
-      "recursos": "string",
-      "tarea": "string"
-    }
-  ],
-  "evaluacion": "string"
-}"""
 
 
 def _extraer_json(texto: str) -> dict:
@@ -317,61 +263,6 @@ def _extraer_json(texto: str) -> dict:
 
     raise ValueError(f"El modelo no regresó un JSON válido. Respuesta cruda:\n{texto[:2000]}")
 
-
-def extraer_planeacion_estructurada(planeacion: Planeacion, historial: list[Mensaje]) -> dict:
-    conversacion_texto = "\n".join(f"{m.role}: {m.content}" for m in historial)
-
-    contexto = f"""Datos fijos de la planeación (no los inventes, úsalos tal cual):
-- Grado: {planeacion.grado}° de primaria, grupo "{planeacion.grupo}"
-- Campo formativo: {planeacion.campo_formativo}
-- Contenido NEM: {planeacion.contenido}
-- Número de sesiones: {planeacion.sesiones}
-- PDA (Proceso de Desarrollo de Aprendizaje):
-{planeacion.pda}
-- Tema/objetivo que quiere abordar el maestro: {planeacion.tema}
-
-Conversación completa entre el maestro y Cuali:
-{conversacion_texto}
-"""
-
-    messages = [
-        {"role": "system", "content": _EXTRACCION_SYSTEM_PROMPT},
-        {"role": "user", "content": contexto},
-    ]
-
-    respuesta_cruda = chat_completion_json(messages=messages, temperature=0.2, max_tokens=3000)
-    datos = _extraer_json(respuesta_cruda)
-
-    # Aseguramos que el número de días coincida con planeacion.sesiones,
-    # por si el modelo no respetó la instrucción.
-    dias = datos.get("dias", [])
-    if len(dias) < planeacion.sesiones:
-        faltantes = planeacion.sesiones - len(dias)
-        for i in range(faltantes):
-            dias.append({
-                "etapa": "",
-                "sesion": f"Sesión {len(dias) + i + 1}",
-                "actividades": "(Pendiente de definir — platica más con Cuali para completar esta sesión.)",
-                "recursos": "",
-                "tarea": "",
-            })
-    datos["dias"] = dias[: planeacion.sesiones]
-
-    return {
-        "grado": planeacion.grado,
-        "grupo": planeacion.grupo,
-        "campo_formativo": planeacion.campo_formativo,
-        "contenido": planeacion.contenido,
-        "pda": planeacion.pda,
-        "tema": planeacion.tema,
-        "metodologia": datos.get("metodologia", ""),
-        "ejes_articuladores": datos.get("ejes_articuladores", []),
-        "titulo_proyecto": datos.get("titulo_proyecto", ""),
-        "intencion_didactica": datos.get("intencion_didactica", ""),
-        "proposito": datos.get("proposito", ""),
-        "dias": datos["dias"],
-        "evaluacion": datos.get("evaluacion", ""),
-    }
 
 _GENERAL_SIN_RAG_SYSTEM = """Eres Cuali, asistente pedagógico para maestros de primaria en México,
 alineado a la Nueva Escuela Mexicana (NEM).
@@ -410,10 +301,8 @@ def generar_respuesta_general(
             allow_markdown=True,
         )
     except RagNoDisponible:
-        return (
-            "No pude conectarme con la base de libros de la SEP en este momento. "
-            "Intenta de nuevo en unos segundos.",
-            [],
+        raise llm_no_disponible(
+            "No pude consultar los libros de la SEP en este momento. Intenta de nuevo en unos segundos."
         )
 
 
@@ -476,7 +365,7 @@ Lo que debe incluir según el maestro: {descripcion}
         diapositivas.append({
             "titulo": "Para reflexionar",
             "puntos": ["¿Qué fue lo que más te gustó del tema?", "Coméntalo con tu grupo."],
-            "emoji": "💭",
+            "emoji": "",
         })
 
     return {"diapositivas": diapositivas}
